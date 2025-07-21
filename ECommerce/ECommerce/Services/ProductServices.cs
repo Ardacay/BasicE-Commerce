@@ -1,0 +1,62 @@
+﻿using AutoMapper;
+using ECommerce.Controllers;
+using ECommerce.Dtos.Product;
+using ECommerce.Models;
+using ECommerce.Repositories;
+using Humanizer;
+
+namespace ECommerce.Services
+{public class ProductServices : IProductServices
+    {
+        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<Order> _orderRepository;
+        private readonly IRepository<Category> _categoryRepository;
+        private readonly IMapper _mapper;
+
+        public ProductServices(IRepository<Product> productRepository, IRepository<Order> orderRepository, IRepository<Category> categoryrepository, IMapper mapper)
+        {
+            _productRepository = productRepository;
+            _orderRepository = orderRepository;
+            _categoryRepository = categoryrepository;
+            _mapper = mapper;
+        }
+        public  async Task<ProductDto> CreateProductAsync(ProductCreateDto dto)
+        {
+            var product = _mapper.Map<Product>(dto);
+            _productRepository.Add(product);
+            return _mapper.Map<ProductDto>(product);
+        }
+
+        public async Task<ProductDto> DeleteProduct(int id)
+        {
+            var product = await _productRepository.GetIdAsync(id);
+            if (product == null) throw new Exception("Product Not Found");
+            _productRepository.Remove(product);
+            _productRepository.Save();
+            return _mapper.Map<ProductDto>(product);
+        }
+
+        public async Task<List<ProductDto>> GetAllProductsAsync()
+        {
+            var products = await _productRepository.GetAllAsync();
+            return _mapper.Map<List<ProductDto>>(products);
+
+        }
+
+        public async Task<ProductDto> GetProductByIdAsync(int id)
+        {
+            var product = await _productRepository.GetIdAsync(id);
+            return _mapper.Map<ProductDto?>(product);
+        }
+
+        public async Task<ProductDto> UpdateProduct(int id)
+        {
+            var product = await _productRepository.GetIdAsync(id);
+            if (product == null) throw new Exception("Product Not Found");
+            _productRepository.Update(product);
+            _productRepository.Save();
+            return _mapper.Map<ProductDto>(product);
+
+        }
+    }
+}

@@ -1,12 +1,13 @@
 ﻿using ECommerce.Dtos.Order;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ECommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrderController:ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly IOrderServices _orderServices;
         public OrderController(IOrderServices orderServices)
@@ -14,16 +15,48 @@ namespace ECommerce.Controllers
             _orderServices = orderServices;
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
-        //{
-        //    if(!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-        //    try
-        //    {
-        //        var result = await _orderServices.CreateOrderAsync(dto);
-        //        return CreatedAtAction
-        //    }
-        //}
+        [HttpPost]
+        //json formatında dto almak için frombody kullanılır
+        public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            try
+            {
+                var result = await _orderServices.CreateOrderAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+
+
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var order = await _orderServices.GetOrderByIdAsync(id);
+
+            if (order == null)
+                return NotFound();
+
+            return Ok(order);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var order = await _orderServices.DeleteOrderById(id);
+            return BadRequest();
+
+        }
+        [HttpPut]
+        public async Task<IActionResult> Update(int id)
+        {
+            var order = await _orderServices.UpdateOrderById(id);
+            return BadRequest();
+        }
+
     }
 }

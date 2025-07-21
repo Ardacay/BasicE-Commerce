@@ -6,5 +6,7 @@ namespace ECommerce.Services
     {
         Task<OrderDetailsDto> CreateOrderAsync(OrderCreateDto orderDto);
         Task<OrderDetailsDto> GetOrderByIdAsync(int id);
+        Task<OrderDetailsDto> DeleteOrderById(int id);
+        Task<OrderDetailsDto> UpdateOrderById(int id);
     }
 }
