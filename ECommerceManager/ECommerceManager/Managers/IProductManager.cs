@@ -1,0 +1,13 @@
+﻿using ECommerceManager.Dtos.Product;
+
+namespace ECommerceManager.Managers
+{
+    public interface IProductManager
+    {
+        Task<List<ProductDto>> GetAllAsync();
+        Task<ProductDto> GetByIdAsync(int id);
+        Task<ProductDto> CreateAsync(ProductDto dto);
+        Task<ProductDto> UpdateAsync(int id, ProductDto dto);
+        Task<bool> DeleteAsync(int id);
+    }
+}
