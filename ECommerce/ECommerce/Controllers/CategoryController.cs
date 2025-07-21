@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace ECommerce.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryServices _categoryService;
@@ -19,7 +19,7 @@ namespace ECommerce.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var category = _categoryService.GetCategoryByIdAsync;
+            var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null)
                 return NotFound();
 
@@ -33,6 +33,12 @@ namespace ECommerce.Controllers
             return Ok(categories);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllTest()
+        {
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            return Ok(categories);
+        }
 
 
         [HttpGet]
@@ -45,7 +51,7 @@ namespace ECommerce.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-          await  _categoryService.DeleteCategory(id);
+            await _categoryService.DeleteCategory(id);
             return NoContent();
         }
 
@@ -58,5 +64,5 @@ namespace ECommerce.Controllers
 
 
 
-}
+    }
 }

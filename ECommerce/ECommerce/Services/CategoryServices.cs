@@ -38,7 +38,7 @@ namespace ECommerce.Services
 
         public async Task<CategoryDto> DeleteCategory(int id)
         {
-            var categories =   await _categoryRepository.GetIdAsync(id);
+            var categories = await _categoryRepository.GetIdAsync(id);
             if (categories == null) throw new Exception("Category not found");
             _categoryRepository.Remove(categories);
             _categoryRepository.Save();
@@ -53,8 +53,8 @@ namespace ECommerce.Services
 
         public async Task<CategoryDto> GetCategoryByIdAsync(int id)
         {
-            var order = await _categoryRepository.GetIdAsync(id);
-            return _mapper.Map<CategoryDto>(id);
+            var category = await _categoryRepository.GetIdAsync(id);
+            return _mapper.Map<CategoryDto>(category);
         }
 
         public async Task<CategoryDto> UpdateCategory(int id)
