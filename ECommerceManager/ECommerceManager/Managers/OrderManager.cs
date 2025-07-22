@@ -5,7 +5,7 @@ namespace ECommerceManager.Managers
     public class OrderManager : IOrderManager
     {
         private readonly HttpClient _httpClient;
-        private readonly string _baseUrl = "https://localhost:7009/api/orders";
+        private readonly string _baseUrl = "https://localhost:44321/api/orders";
 
         public OrderManager(HttpClient httpClient, string baseUrl)
         {

@@ -5,7 +5,7 @@ namespace ECommerceManager.Managers
     public class ProductManager : IProductManager
     {
         private readonly HttpClient _httpClient;
-        private readonly string _baseUrl = "https://localhost:7009/api/products";
+        private readonly string _baseUrl = "https://localhost:44321/api/products";
 
         public ProductManager(HttpClient httpClient, string baseUrl)
         {

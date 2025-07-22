@@ -19,15 +19,15 @@ builder.Services.AddHttpClient<IOrderManager, OrderManager>();
 
 builder.Services.AddHttpClient<ICategoryManager, CategoryManager>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7009"); 
+    client.BaseAddress = new Uri("https://localhost:44321"); 
 });
 builder.Services.AddHttpClient<IProductManager, ProductManager>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7009");
+    client.BaseAddress = new Uri("https://localhost:44321");
 });
 builder.Services.AddHttpClient<IOrderManager, OrderManager>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7009");
+    client.BaseAddress = new Uri("https://localhost:44321");
 });
 
 

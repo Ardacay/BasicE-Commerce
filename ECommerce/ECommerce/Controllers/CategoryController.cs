@@ -48,14 +48,14 @@ namespace ECommerce.Controllers
             return Ok(categories);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             await _categoryService.DeleteCategory(id);
             return NoContent();
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Update(int id)
         {
             _categoryService.UpdateCategory(id);

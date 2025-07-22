@@ -23,10 +23,11 @@ namespace ECommerceManager.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var categories = await _categoryManager.GetByIdAsync(id);
-            return View(categories);
 
+            var categoryDetails = await _categoryManager.GetByIdAsync(id);
+            return View(categoryDetails);
         }
+
         public IActionResult Create()
         {
             return View();
@@ -37,28 +38,33 @@ namespace ECommerceManager.Controllers
             if (!ModelState.IsValid) return View(Dto);
             await _categoryManager.CreateAsync(Dto);
             return RedirectToAction("Index");
+
+
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var categories = await _categoryManager.GetByIdAsync(id);
             return View(categories);
         }
-        [HttpPost("{id}")]
+
+        [HttpPost]
         public async Task<IActionResult> Edit(int id, CategoryDto Dto)
         {
             if (!ModelState.IsValid) return View(id.ToString(), Dto);
             await _categoryManager.UpdateAsync(id, Dto);
             return RedirectToAction("Index");
-            
+
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var categories = _categoryManager.GetByIdAsync(id);
+            var categories = await _categoryManager.GetByIdAsync(id);
             return View(categories);
         }
-        [HttpDelete, ActionName("Delete")]
+
+        [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _categoryManager.DeleteAsync(id);
