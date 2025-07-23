@@ -21,5 +21,7 @@ namespace ECommerce.Repositories
         void Remove(T objModel);
         void Save();
         void Dispose();
+        Task<IEnumerable<T>> GetAllWithIncludeAsync(params Expression<Func<T, object>>[] includes);
+
     }
 }

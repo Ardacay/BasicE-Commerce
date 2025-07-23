@@ -6,7 +6,8 @@ using ECommerce.Repositories;
 using Humanizer;
 
 namespace ECommerce.Services
-{public class ProductServices : IProductServices
+{
+    public class ProductServices : IProductServices
     {
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<Order> _orderRepository;
@@ -20,11 +21,24 @@ namespace ECommerce.Services
             _categoryRepository = categoryrepository;
             _mapper = mapper;
         }
-        public  async Task<ProductDto> CreateProductAsync(ProductCreateDto dto)
+        public async Task<ProductDto> CreateProductAsync(ProductCreateDto dto)
         {
             var product = _mapper.Map<Product>(dto);
-            _productRepository.Add(product);
+            try
+            {
+                _productRepository.Add(product);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+
+            _productRepository.Save();
+
             return _mapper.Map<ProductDto>(product);
+
+
         }
 
         public async Task<ProductDto> DeleteProduct(int id)
@@ -36,12 +50,12 @@ namespace ECommerce.Services
             return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task<List<ProductDto>> GetAllProductsAsync()
-        {
-            var products = await _productRepository.GetAllAsync();
-            return _mapper.Map<List<ProductDto>>(products);
+        //public async Task<List<ProductDto>> GetAllProductsAsync()
+        //{
+        //    var products = await _productRepository.GetAllAsync();
+        //    return _mapper.Map<List<ProductDto>>(products);
 
-        }
+        //}
 
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
@@ -58,5 +72,11 @@ namespace ECommerce.Services
             return _mapper.Map<ProductDto>(product);
 
         }
+        public async Task<List<ProductDto>> GetAllProductsAsync()
+        {
+            var products = await _productRepository.GetAllWithIncludeAsync(p => p.Category);
+            return _mapper.Map<List<ProductDto>>(products);
+        }
+
     }
 }

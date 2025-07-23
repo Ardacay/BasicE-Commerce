@@ -15,12 +15,15 @@ namespace ECommerceManager.Managers
 
         }
 
-        public async Task<List<OrderDetailsDto>> GetAllAsync()
+       
+        public async Task<List<OrderDto>> GetAllAsync()
         {
             var url = $"{_baseUrl}/GetAll";
-            var response = await _httpClient.GetAsync(_baseUrl);
-            return await response.Content.ReadFromJsonAsync<List<OrderDetailsDto>>();
+            var response = await _httpClient.GetAsync(url);
+            var contentStr = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<OrderDto>>(contentStr);
         }
+
 
         public async Task<OrderDetailsDto> GetByIdAsync(int id)
         {
@@ -46,5 +49,7 @@ namespace ECommerceManager.Managers
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

@@ -3,6 +3,7 @@ using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using ECommerce.Dtos.Product;
 using ECommerce.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
@@ -46,13 +47,13 @@ public class ProductController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        _productService.DeleteProduct(id);
-        return BadRequest();
+        await _productService.DeleteProduct(id);
+        return Ok(id);
     }
     [HttpPut]
     public async Task<IActionResult> Update(int id)
     {
         _productService.UpdateProduct(id);
-        return BadRequest();
+        return Ok();
     }
 }

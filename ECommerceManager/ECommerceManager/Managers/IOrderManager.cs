@@ -5,7 +5,7 @@ namespace ECommerceManager.Managers
 {
     public interface IOrderManager
     {
-        Task<List<OrderDetailsDto>> GetAllAsync();
+        Task<List<OrderDto>> GetAllAsync();
         Task<OrderDetailsDto> GetByIdAsync(int id);
         Task<OrderDetailsDto> CreateAsync(OrderCreateDto dto);
         //Task<CategoryDto> UpdateAsync(CategoryDto dto);
