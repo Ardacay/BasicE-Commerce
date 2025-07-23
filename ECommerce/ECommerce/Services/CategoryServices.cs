@@ -57,13 +57,13 @@ namespace ECommerce.Services
             return _mapper.Map<CategoryDto>(category);
         }
 
-        public async Task<CategoryDto> UpdateCategory(int id)
+        public async Task<CategoryDto> UpdateCategory(CategoryDto dto)
         {
-            var categories = await _categoryRepository.GetIdAsync(id);
-            if (categories == null) throw new Exception("Category Not Found");
-            _categoryRepository.Update(categories);
+            var category = _mapper.Map<Category>(dto);
+            if (category == null) throw new Exception("Category Not Found");
+            _categoryRepository.Update(category);
             _categoryRepository.Save();
-            return _mapper.Map<CategoryDto>(categories);
+            return _mapper.Map<CategoryDto>(category);
         }
     }
 }

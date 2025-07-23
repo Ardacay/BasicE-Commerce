@@ -45,16 +45,11 @@ namespace ECommerceManager.Managers
 
         }
 
-        public async Task<CategoryDto> UpdateAsync(int id, CategoryDto dto)
+        public async Task<CategoryDto> UpdateAsync(CategoryDto dto)
         {
-            var url = $"{_baseUrl}/Update/{id}";
-            var jsonBody = JsonConvert.SerializeObject(dto);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-
-            //var response = await _httpClient.PutAsync($"{_baseUrl}/{id}", content);
-            var response = await _httpClient.PutAsync(url, content);
+            var url = $"{_baseUrl}/Update";
+            var response = await _httpClient.PostAsJsonAsync(url, dto);
             var responseString = await response.Content.ReadAsStringAsync();
-
             return JsonConvert.DeserializeObject<CategoryDto>(responseString);
 
         }

@@ -93,7 +93,7 @@ namespace ECommerce.Repositories
 
         public void Update(T Model)
         {
-            _context.Entry(Model).State = EntityState.Modified;
+            _context.Update(Model);
             _context.SaveChanges();
         }
     }

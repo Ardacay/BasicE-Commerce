@@ -10,6 +10,6 @@ namespace ECommerce.Services
 
         Task<CategoryDto> GetCategoryByIdAsync(int id);
         Task<CategoryDto> DeleteCategory(int id);
-        Task<CategoryDto> UpdateCategory(int id);
+        Task<CategoryDto> UpdateCategory(CategoryDto dto);
     }
 }

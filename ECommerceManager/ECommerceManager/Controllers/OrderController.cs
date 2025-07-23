@@ -42,5 +42,13 @@ namespace ECommerceManager.Controllers
             return RedirectToAction("Index");
         }
 
+        //public async Task<IActionResult> Delete(id)
+        //{
+
+        //}
+        //public async Task<IActionResult> Update(UpdateOrderDto dto) 
+        //{
+        //}
+
     }
 }

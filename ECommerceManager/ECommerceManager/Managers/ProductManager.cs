@@ -10,35 +10,40 @@ namespace ECommerceManager.Managers
         public ProductManager(HttpClient httpClient, string baseUrl)
         {
             _httpClient = httpClient;
-            _baseUrl = baseUrl;
+            
         }
 
         public async Task<List<ProductDto>> GetAllAsync()
         {
-            var response = await _httpClient.GetAsync(_baseUrl);
+            var url = $"{_baseUrl}/GetAll";
+            var response = await _httpClient.GetAsync(url);
             return await response.Content.ReadFromJsonAsync<List<ProductDto>>();
         }
 
         public async Task<ProductDto> GetByIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/{id}");
+            var url = $"{_baseUrl}/GetById/{id}";
+            var response = await _httpClient.GetAsync(url);
             return await response.Content.ReadFromJsonAsync<ProductDto>();
         }
 
         public async Task<ProductDto> CreateAsync(ProductDto dto)
         {
-            var response = await _httpClient.PostAsJsonAsync(_baseUrl, dto);
+            var url = $"{_baseUrl}/Create";
+            var response = await _httpClient.PostAsJsonAsync(url, dto);
             return await response.Content.ReadFromJsonAsync<ProductDto>();
         }
 
         public async Task<ProductDto> UpdateAsync(int id, ProductDto dto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{id}", dto);
+            var url = $"{_baseUrl}/Update/{id}";
+            var response = await _httpClient.PutAsJsonAsync(url, dto);
             return await response.Content.ReadFromJsonAsync<ProductDto>();
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
+            var url = $"{_baseUrl}/Delete/{id}";
             var response = await _httpClient.DeleteAsync($"{_baseUrl}/{id}");
             return response.IsSuccessStatusCode;
         }

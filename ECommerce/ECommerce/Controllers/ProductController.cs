@@ -5,7 +5,7 @@ using ECommerce.Dtos.Product;
 using ECommerce.Services;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class ProductController : ControllerBase
 {
     private readonly IProductServices _productService;

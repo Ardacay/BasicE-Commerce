@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace ECommerce.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class OrderController : ControllerBase
     {
         private readonly IOrderServices _orderServices;
@@ -31,9 +31,14 @@ namespace ECommerce.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-
-
         }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var order = await _orderServices.GetAllOrders();
+        //    return Ok(order);
+        //}
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

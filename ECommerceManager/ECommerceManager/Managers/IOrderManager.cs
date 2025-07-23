@@ -1,4 +1,5 @@
-﻿using ECommerceManager.Dtos.Order;
+﻿using ECommerceManager.Dtos.Categories;
+using ECommerceManager.Dtos.Order;
 
 namespace ECommerceManager.Managers
 {
@@ -7,5 +8,7 @@ namespace ECommerceManager.Managers
         Task<List<OrderDetailsDto>> GetAllAsync();
         Task<OrderDetailsDto> GetByIdAsync(int id);
         Task<OrderDetailsDto> CreateAsync(OrderCreateDto dto);
+        //Task<CategoryDto> UpdateAsync(CategoryDto dto);
+        Task<bool> DeleteAsync(int id);
     }
 }

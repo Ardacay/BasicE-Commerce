@@ -50,10 +50,10 @@ namespace ECommerceManager.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, CategoryDto Dto)
+        public async Task<IActionResult> Edit(CategoryDto Dto)
         {
-            if (!ModelState.IsValid) return View(id.ToString(), Dto);
-            await _categoryManager.UpdateAsync(id, Dto);
+            if (!ModelState.IsValid) return View(Dto.Id.ToString(), Dto);
+            await _categoryManager.UpdateAsync(Dto);
             return RedirectToAction("Index");
 
         }

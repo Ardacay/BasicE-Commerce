@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ECommerce.Dtos.Category;
 using ECommerce.Dtos.Order;
 using ECommerce.Models;
 using ECommerce.Repositories;
@@ -59,6 +60,12 @@ namespace ECommerce.Services
             _orderRepository.Remove(order);
             _orderRepository.Save();
             return _mapper.Map<OrderDetailsDto>(order);
+        }
+
+        public async Task<List<OrderDto>> GetAllOrders()
+        {
+            var orders= await _orderRepository.GetAllAsync(); 
+            return _mapper.Map<List<OrderDto>>(orders);
         }
 
         public async Task<OrderDetailsDto> GetOrderByIdAsync(int id)
