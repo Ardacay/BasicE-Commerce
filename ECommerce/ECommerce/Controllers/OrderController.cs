@@ -52,15 +52,15 @@ namespace ECommerce.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var order = await _orderServices.DeleteOrderById(id);
-            return BadRequest();
+           await _orderServices.DeleteOrderById(id);
+            return Ok(id);
 
         }
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Update(OrderDto dto)
         {
             var order = await _orderServices.UpdateOrder(dto);
-            return BadRequest();
+            return Ok(order);
         }
 
     }

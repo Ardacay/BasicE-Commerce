@@ -10,42 +10,51 @@
     <h4>Product</h4>
     <hr />
     <dl class="row">
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Stock)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Stock)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoryId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CategoryId)
-        </dd>
-        
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Id)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Id)</dd>
 
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Name)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Price)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Price)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Stock)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Stock)</dd>
+
+      
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CategoryId)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CategoryId)</dd>
+
+     
+        <dt class="col-sm-2">Category Name</dt>
+        <dd class="col-sm-10">
+            <span id="categoryName"><i class="fas fa-spinner fa-spin"></i></span>
+        </dd>
+    </dl>
 </div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const categoryId = @Model.CategoryId;
+
+            $.ajax({
+                url: `https://localhost:44321/api/Category/GetById/${categoryId}`,
+                method: "GET",
+                success: function (data) {
+                    $("#categoryName").text(data.name);
+                },
+                error: function () {
+                    $("#categoryName").text("Kategori bulunamadı");
+                }
+            });
+        });
+    </script>
+}

@@ -57,6 +57,11 @@ namespace ECommerceManager.Managers
         {
             var url = $"{_baseUrl}/Delete/{id}";
             var response = await _httpClient.DeleteAsync(url);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+            }
+
             return response.IsSuccessStatusCode;
         }
 

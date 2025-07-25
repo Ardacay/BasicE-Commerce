@@ -1,5 +1,81 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ECommerceManager.Dtos.Order.OrderDto
+
 @{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Order</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Id)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Id)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CustomerName)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CustomerName)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.OrderDate)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.OrderDate)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.ProductId)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.ProductId)</dd>
+
+        <dt class="col-sm-2">Product Name</dt>
+        <dd class="col-sm-10"><span id="productName"><i class="fas fa-spinner fa-spin"></i></span></dd>
+
+        <dt class="col-sm-2">Price</dt>
+        <dd class="col-sm-10"><span id="productPrice"><i class="fas fa-spinner fa-spin"></i></span></dd>
+
+        <dt class="col-sm-2">Stock</dt>
+        <dd class="col-sm-10"><span id="productStock"><i class="fas fa-spinner fa-spin"></i></span></dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CategoryId)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CategoryId)</dd>
+
+        <dt class="col-sm-2">Category Name</dt>
+        <dd class="col-sm-10"><span id="categoryName"><i class="fas fa-spinner fa-spin"></i></span></dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            const productId = @Model.ProductId;
+            const categoryId = @Model.CategoryId;
+
+            $.ajax({
+                url: `https://localhost:44321/api/Product/GetById/${productId}`,
+                method: "GET",
+                success: function (data) {
+                    $("#productName").text(data.name);
+                    $("#productPrice").text("₺" + data.price);
+                    $("#productStock").text(data.stock);
+                },
+                error: function () {
+                    $("#productName").text("Bilinmiyor");
+                    $("#productPrice").text("-");
+                    $("#productStock").text("-");
+                }
+            });
+
+            $.ajax({
+                url: `https://localhost:44321/api/Category/GetById/${categoryId}`,
+                method: "GET",
+                success: function (data) {
+                    $("#categoryName").text(data.name);
+                },
+                error: function () {
+                    $("#categoryName").text("Bilinmiyor");
+                }
+            });
+        });
+    </script>
 }

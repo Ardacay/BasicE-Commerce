@@ -47,6 +47,7 @@ namespace ECommerceManager.Controllers
             var order = await _orderManager.GetByIdAsync(id);
             return View(order);
         }
+        [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _orderManager.DeleteAsync(id);
@@ -55,13 +56,14 @@ namespace ECommerceManager.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var product = await _orderManager.GetByIdAsync(id);
-            return View(product);
+            var order = await _orderManager.GetByIdAsync(id);
+            return View(order);
         }
+        [HttpPost]
         public async Task<IActionResult> Edit(OrderDto dto) 
         {
             if (!ModelState.IsValid)
-                return View(dto.Id.ToString(), dto);
+                return View( dto);
 
             await _orderManager.UpdateAsync(dto);
             return RedirectToAction("Index");
