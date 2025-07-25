@@ -7,6 +7,8 @@ using ECommerceManager.Managers;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient<ICategoryManager, CategoryManager>();

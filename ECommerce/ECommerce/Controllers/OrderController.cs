@@ -17,7 +17,7 @@ namespace ECommerce.Controllers
 
         [HttpPost]
         //json formatında dto almak için frombody kullanılır
-        public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
+        public async Task<IActionResult> Create([FromBody] OrderDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -32,12 +32,12 @@ namespace ECommerce.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var order = await _orderServices.GetAllOrders();
-        //    return Ok(order);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+          var order =await _orderServices.GetAllOrders();
+            return Ok(order);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -57,9 +57,9 @@ namespace ECommerce.Controllers
 
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> Update(OrderDto dto)
         {
-            var order = await _orderServices.UpdateOrderById(id);
+            var order = await _orderServices.UpdateOrder(dto);
             return BadRequest();
         }
 

@@ -12,13 +12,13 @@ namespace ECommerce.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Order, OrderDetailsDto>().ReverseMap();
-            CreateMap<OrderItem, OrderItemDetailDto>()
-                .ForMember(dest => dest.ProductName,
-                opt => opt.MapFrom(src => src.Product.Name));
-
-            CreateMap<OrderCreateDto, Order>();
-            CreateMap<OrderItemDto, OrderItem>();
+          
+            CreateMap<Order, OrderDto>().ReverseMap();  
+           
+            CreateMap<OrderDto,OrderItemDto >().ReverseMap();
+           
+      
+            CreateMap<OrderItemDto, OrderProduct>();
 
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<CategoryController, Category>();
@@ -26,7 +26,7 @@ namespace ECommerce.Mapping
 
 
 
-            CreateMap<Product, ProductDto>();
+            CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<ProductCreateDto, Product>().ReverseMap();
         }
     }

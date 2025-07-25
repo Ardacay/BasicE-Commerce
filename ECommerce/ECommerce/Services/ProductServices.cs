@@ -10,15 +10,12 @@ namespace ECommerce.Services
     public class ProductServices : IProductServices
     {
         private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
 
-        public ProductServices(IRepository<Product> productRepository, IRepository<Order> orderRepository, IRepository<Category> categoryrepository, IMapper mapper)
+        public ProductServices(IRepository<Product> productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
-            _orderRepository = orderRepository;
-            _categoryRepository = categoryrepository;
+           
             _mapper = mapper;
         }
         public async Task<ProductDto> CreateProductAsync(ProductCreateDto dto)
@@ -32,8 +29,6 @@ namespace ECommerce.Services
             {
 
             }
-
-
             _productRepository.Save();
 
             return _mapper.Map<ProductDto>(product);
@@ -63,11 +58,11 @@ namespace ECommerce.Services
             return _mapper.Map<ProductDto?>(product);
         }
 
-        public async Task<ProductDto> UpdateProduct(int id)
+        public  async Task<ProductDto> UpdateProduct(ProductDto dto)
         {
-            var product = await _productRepository.GetIdAsync(id);
+            var product = _mapper.Map<Product>(dto);
             if (product == null) throw new Exception("Product Not Found");
-            _productRepository.Update(product);
+           _productRepository.Update(product);
             _productRepository.Save();
             return _mapper.Map<ProductDto>(product);
 

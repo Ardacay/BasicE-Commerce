@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using ECommerce.Dtos.Category;
 using ECommerce.Dtos.Order;
+using ECommerce.Dtos.Product;
 using ECommerce.Models;
 using ECommerce.Repositories;
+using Humanizer;
 
 namespace ECommerce.Services
 {
@@ -20,68 +22,53 @@ namespace ECommerce.Services
             _mapper = mapper;
         }
 
-        public async Task<OrderDetailsDto> CreateOrderAsync(OrderCreateDto orderDto)
+        public async Task<OrderDto> CreateOrderAsync(OrderDto dto)
         {
-            var orderItems = new List<OrderItem>();
-            foreach (var itemdto in orderDto.Items)
+            var order = _mapper.Map<Order>(dto);
+            try
             {
-                var product = await _productRepository.GetIdAsync(itemdto.ProductId) ?? throw new Exception("product not found");
-                if (product.Stock < itemdto.Quantity)
-                    throw new Exception($"'{product.Name}'stok yetersiz");
-
-                product.Stock -= itemdto.Quantity;
-                var ordeItem = new OrderItem
-                {
-                    ProductId = product.Id,
-                    Quantity = itemdto.Quantity,
-                    UnitPrice = product.Price,
-                };
-                orderItems.Add(ordeItem);
-                _productRepository.Update(product);
+                _orderRepository.Add(order);
             }
-            var order = new Order
+            catch (Exception e)
             {
-                CustomerName = orderDto.CustomerName,
-                OrderDate = DateTime.Now,
-                OrderItems = orderItems
 
-            };
-            _orderRepository.Add(order);
+            }
             _orderRepository.Save();
-            _productRepository.Save();
 
-            return _mapper.Map<OrderDetailsDto>(order);
+            return _mapper.Map<OrderDto>(order);
+
         }
 
-        public async Task<OrderDetailsDto> DeleteOrderById(int id)
+        public async Task<OrderDto> DeleteOrderById(int id)
         {
             var order = await _orderRepository.GetIdAsync(id);
             if (order == null) throw new Exception("Order Not Found");
             _orderRepository.Remove(order);
             _orderRepository.Save();
-            return _mapper.Map<OrderDetailsDto>(order);
+            return _mapper.Map<OrderDto>(order);
         }
 
         public async Task<List<OrderDto>> GetAllOrders()
         {
-            var orders= await _orderRepository.GetAllAsync(); 
+            var orders = await _orderRepository.GetAllAsync();
             return _mapper.Map<List<OrderDto>>(orders);
         }
 
-        public async Task<OrderDetailsDto> GetOrderByIdAsync(int id)
+        public async Task<OrderDto> GetOrderByIdAsync(int id)
         {
-            var order = await _orderRepository.GetIdAsync(id);
-            return _mapper.Map<OrderDetailsDto>(order);
+           var order= await _orderRepository.GetIdAsync(id);
+            if (order == null) throw new Exception("Order Not Found");
+            return _mapper.Map<OrderDto>(order);
+
         }
 
-        public async Task<OrderDetailsDto> UpdateOrderById(int id)
+        public async Task<OrderDto> UpdateOrder(OrderDto dto)
         {
-            var order = await _orderRepository.GetIdAsync(id);
+            var order = _mapper.Map<Order>(dto);
             if (order == null) throw new Exception("Order Not Found");
             _orderRepository.Update(order);
             _orderRepository.Save();
-            return _mapper.Map<OrderDetailsDto>(order);
-            
+            return _mapper.Map<OrderDto>(order);
         }
     }
 }

@@ -50,10 +50,10 @@ public class ProductController : ControllerBase
         await _productService.DeleteProduct(id);
         return Ok(id);
     }
-    [HttpPut]
-    public async Task<IActionResult> Update(int id)
+    [HttpPost]
+    public async Task<IActionResult> Update( ProductDto dto)
     {
-        _productService.UpdateProduct(id);
-        return Ok();
+        await  _productService.UpdateProduct(dto);
+        return Ok(dto);
     }
 }

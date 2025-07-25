@@ -33,22 +33,39 @@ namespace ECommerceManager.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(OrderCreateDto dto)
+        public async Task<IActionResult> Create(OrderDto dto)
         {
             if (!ModelState.IsValid)
                 return View(dto);
 
-            await _orderManager.CreateAsync(dto);
+            var createdOrder = await _orderManager.CreateAsync(dto);
             return RedirectToAction("Index");
         }
 
-        //public async Task<IActionResult> Delete(id)
-        //{
+        public async Task<IActionResult> Delete(int id)
+        {
+            var order = await _orderManager.GetByIdAsync(id);
+            return View(order);
+        }
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _orderManager.DeleteAsync(id);
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var product = await _orderManager.GetByIdAsync(id);
+            return View(product);
+        }
+        public async Task<IActionResult> Edit(OrderDto dto) 
+        {
+            if (!ModelState.IsValid)
+                return View(dto.Id.ToString(), dto);
 
-        //}
-        //public async Task<IActionResult> Update(UpdateOrderDto dto) 
-        //{
-        //}
+            await _orderManager.UpdateAsync(dto);
+            return RedirectToAction("Index");
+        }
 
     }
 }

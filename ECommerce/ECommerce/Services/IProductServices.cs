@@ -7,7 +7,7 @@ namespace ECommerce.Services
         Task<List<ProductDto>> GetAllProductsAsync();
         Task<ProductDto> GetProductByIdAsync(int id);
         Task<ProductDto> CreateProductAsync(ProductCreateDto dto);
-        Task<ProductDto> UpdateProduct(int id);
+        Task<ProductDto> UpdateProduct(ProductDto dto);
         Task<ProductDto> DeleteProduct(int id);
 
     }

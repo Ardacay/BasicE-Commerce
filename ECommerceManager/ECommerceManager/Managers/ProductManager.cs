@@ -1,6 +1,7 @@
 ﻿using ECommerceManager.Dtos.Categories;
 using ECommerceManager.Dtos.Product;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace ECommerceManager.Managers
 {
@@ -46,11 +47,18 @@ namespace ECommerceManager.Managers
 
         }
 
-        public async Task<ProductDto> UpdateAsync(int id, ProductDto dto)
+        public async Task<ProductDto> UpdateAsync(ProductDto dto)
         {
-            var url = $"{_baseUrl}/Update/{id}";
-            var response = await _httpClient.PutAsJsonAsync(url, dto);
-            return await response.Content.ReadFromJsonAsync<ProductDto>();
+            var url = $"{_baseUrl}/Update";
+            var response = await _httpClient.PostAsJsonAsync(url, dto);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"API error: {response.StatusCode}, {errorContent}");
+            }
+            var responseString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ProductDto>(responseString);
+
         }
 
         public async Task<bool> DeleteAsync(int id)

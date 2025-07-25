@@ -5,10 +5,10 @@ namespace ECommerce.Services
 {
     public interface IOrderServices
     {
-        Task<OrderDetailsDto> CreateOrderAsync(OrderCreateDto orderDto);
-        //Task<List<CategoryDto>> GetAllOrders();
-        Task<OrderDetailsDto> GetOrderByIdAsync(int id);
-        Task<OrderDetailsDto> DeleteOrderById(int id);
-        Task<OrderDetailsDto> UpdateOrderById(int id);
+        Task<OrderDto> CreateOrderAsync(OrderDto dto);
+        Task<List<OrderDto>> GetAllOrders();
+        Task<OrderDto> GetOrderByIdAsync(int id);
+        Task<OrderDto> DeleteOrderById(int id);
+        Task<OrderDto> UpdateOrder(OrderDto dto);
     }
 }

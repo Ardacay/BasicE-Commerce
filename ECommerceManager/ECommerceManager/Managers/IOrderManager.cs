@@ -5,10 +5,10 @@ namespace ECommerceManager.Managers
 {
     public interface IOrderManager
     {
-        Task<List<OrderDto>> GetAllAsync();
-        Task<OrderDetailsDto> GetByIdAsync(int id);
-        Task<OrderDetailsDto> CreateAsync(OrderCreateDto dto);
-        //Task<CategoryDto> UpdateAsync(CategoryDto dto);
+        Task<IEnumerable<OrderDto>> GetAllAsync();
+        Task<OrderDto> GetByIdAsync(int id);
+        Task<OrderDto> CreateAsync(OrderDto dto);
+        Task<OrderDto> UpdateAsync(OrderDto dto);
         Task<bool> DeleteAsync(int id);
     }
 }
