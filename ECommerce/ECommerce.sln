@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce", "ECommerce\ECommerce.csproj", "{76E2ECC3-6858-4AA6-BACB-849E665720B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerceAuth", "ECommerceAuth\ECommerceAuth.csproj", "{07F0C448-EF49-438A-A693-0552C432A995}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{76E2ECC3-6858-4AA6-BACB-849E665720B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76E2ECC3-6858-4AA6-BACB-849E665720B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76E2ECC3-6858-4AA6-BACB-849E665720B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07F0C448-EF49-438A-A693-0552C432A995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F0C448-EF49-438A-A693-0552C432A995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F0C448-EF49-438A-A693-0552C432A995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F0C448-EF49-438A-A693-0552C432A995}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
