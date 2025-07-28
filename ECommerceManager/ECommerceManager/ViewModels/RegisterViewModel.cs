@@ -18,8 +18,15 @@ namespace ECommerceManager.ViewModels
         [Compare("Password", ErrorMessage = "Şifreler uyuşmuyor.")]
         public string ConfirmPassword { get; set; }
 
-        [Required(ErrorMessage = "Ad soyad zorunludur.")]
-        public string FullName { get; set; }
+        [Required(ErrorMessage = "Ad  zorunludur.")]
+        public string Name { get; set; } 
+        [Required(ErrorMessage = "Soyad zorunludur.")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Phone]
+        [Display(Name = "Telefon Numarası")]
+        public string PhoneNumber { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Doğum Tarihi")]

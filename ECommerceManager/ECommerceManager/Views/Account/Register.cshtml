@@ -1,0 +1,435 @@
+﻿@model ECommerceManager.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid vh-100">
+    <div class="row h-100">
+        <div class="col-12 d-flex align-items-center justify-content-center">
+            <div class="card shadow-lg" style="max-width: 450px; width: 100%;">
+                <div class="card-body p-5">
+                    <!-- Logo ve Başlık -->
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-4x text-primary mb-3"></i>
+                        <h2 class="card-title">Kayıt Ol</h2>
+                        <p class="text-muted">Yeni hesap oluşturun</p>
+                    </div>
+
+                    <!-- Hata Mesajları -->
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @Html.ValidationSummary(true, "Lütfen hataları düzeltin:")
+                        </div>
+                    }
+
+                    <!-- Register Form -->
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "needs-validation", @novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <!-- Ad Input -->
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">
+                                <i class="fas fa-user me-2"></i>Ad
+                            </label>
+                            @Html.TextBoxFor(m => m.Name, new
+                                {
+                                    @class = "form-control",
+                                    @id = "firstName",
+                                    @placeholder = "Adınızı girin",
+                                    @required = "required"
+                                })
+                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <!-- Soyad Input -->
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">
+                                <i class="fas fa-user me-2"></i>Soyad
+                            </label>
+                            @Html.TextBoxFor(m => m.LastName, new
+                                {
+                                    @class = "form-control",
+                                    @id = "lastName",
+                                    @placeholder = "Soyadınızı girin",
+                                    @required = "required"
+                                })
+                            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <!-- Email Input -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>E-posta Adresi
+                            </label>
+                            @Html.TextBoxFor(m => m.Email, new
+                                {
+                                    @class = "form-control",
+                                    @id = "email",
+                                    @placeholder = "ornek@email.com",
+                                    @type = "email",
+                                    @required = "required"
+                                })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                            <div class="form-text">
+                                <small class="text-muted">Bu e-posta adresine doğrulama linki gönderilecektir.</small>
+                            </div>
+                        </div>
+
+                        <!-- Telefon Input -->
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone me-2"></i>Telefon (Opsiyonel)
+                            </label>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new
+                                {
+                                    @class = "form-control",
+                                    @id = "phone",
+                                    @placeholder = "+90 5XX XXX XX XX",
+                                    @type = "tel"
+                                })
+                            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <!-- Birthday Input -->
+                        <div class="mb-3">
+                            <label for="birthday" class="form-label">
+                                <i class="fas fa-calendar-alt me-2"></i>Doğum Tarihi
+                            </label>
+                            @Html.TextBoxFor(m => m.BirthDate, new
+                                {
+                                    @class = "form-control",
+                                    @id = "birthday",
+                                    @type = "date",
+                                    @required = "required"
+                                })
+                            @Html.ValidationMessageFor(m => m.BirthDate, "", new { @class = "text-danger small" })
+                        </div>
+
+
+                        <!-- Password Input -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Şifre
+                            </label>
+                            <div class="input-group">
+                                @Html.PasswordFor(m => m.Password, new
+                                    {
+                                        @class = "form-control",
+                                        @id = "password",
+                                        @placeholder = "Güçlü bir şifre oluşturun",
+                                        @required = "required"
+                                    })
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+
+                            <!-- Password Strength Indicator -->
+                            <div class="mt-2">
+                                <div class="progress" style="height: 4px;">
+                                    <div class="progress-bar" id="passwordStrength" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted" id="passwordStrengthText">Şifre gücü: Zayıf</small>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password Input -->
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Şifre Tekrar
+                            </label>
+                            <div class="input-group">
+                                @Html.PasswordFor(m => m.ConfirmPassword, new
+                                    {
+                                        @class = "form-control",
+                                        @id = "confirmPassword",
+                                        @placeholder = "Şifrenizi tekrar girin",
+                                        @required = "required"
+                                    })
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
+                            <div id="passwordMatch" class="form-text"></div>
+                        </div>
+
+                      
+
+                        <!-- Register Button -->
+                        <button type="submit" class="btn btn-primary w-100 mb-3" id="registerBtn">
+                            <span id="registerText">Kayıt Ol</span>
+                            <span id="registerSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                        </button>
+                    }
+
+                    <!-- Divider -->
+                    <div class="text-center mb-3">
+                        <span class="text-muted">veya</span>
+                    </div>
+
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <p class="mb-0">
+                            Zaten hesabınız var mı?
+                            <a href="@Url.Action("Login", "Account")" class="text-decoration-none">
+                                Giriş yapın
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kullanım Şartları</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Genel Hükümler</h6>
+                <p>Bu kullanım şartları, platformumuzun kullanımına ilişkin kuralları belirler...</p>
+
+                <h6>2. Kullanıcı Sorumlulukları</h6>
+                <p>Kullanıcılar, hesap bilgilerinin güvenliğinden sorumludur...</p>
+
+                <h6>3. Gizlilik</h6>
+                <p>Kişisel verileriniz, gizlilik politikamız çerçevesinde korunur...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gizlilik Politikası</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Veri Toplama</h6>
+                <p>Sadece gerekli kişisel bilgileri topluyoruz...</p>
+
+                <h6>Veri Kullanımı</h6>
+                <p>Verileriniz sadece hizmet kalitesini artırmak için kullanılır...</p>
+
+                <h6>Veri Güvenliği</h6>
+                <p>Verileriniz en yüksek güvenlik standartlarıyla korunur...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Password Toggle Functions
+        function setupPasswordToggle(passwordId, toggleId) {
+            document.getElementById(toggleId).addEventListener('click', function() {
+                const password = document.getElementById(passwordId);
+                const icon = this.querySelector('i');
+
+                if (password.type === 'password') {
+                    password.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    password.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        }
+
+        setupPasswordToggle('password', 'togglePassword');
+        setupPasswordToggle('confirmPassword', 'toggleConfirmPassword');
+
+        // Password Strength Checker
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthBar = document.getElementById('passwordStrength');
+            const strengthText = document.getElementById('passwordStrengthText');
+
+            let strength = 0;
+            let text = 'Çok Zayıf';
+            let color = 'bg-danger';
+
+            // Length check
+            if (password.length >= 8) strength += 25;
+
+            // Uppercase check
+            if (/[A-Z]/.test(password)) strength += 25;
+
+            // Lowercase check
+            if (/[a-z]/.test(password)) strength += 25;
+
+            // Number or special char check
+            if (/[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password)) strength += 25;
+
+            // Update text and color
+            if (strength >= 75) {
+                text = 'Güçlü';
+                color = 'bg-success';
+            } else if (strength >= 50) {
+                text = 'Orta';
+                color = 'bg-warning';
+            } else if (strength >= 25) {
+                text = 'Zayıf';
+                color = 'bg-info';
+            }
+
+            strengthBar.style.width = strength + '%';
+            strengthBar.className = 'progress-bar ' + color;
+            strengthText.textContent = 'Şifre gücü: ' + text;
+        });
+
+        // Password Match Checker
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const matchDiv = document.getElementById('passwordMatch');
+
+            if (confirmPassword === '') {
+                matchDiv.textContent = '';
+                return;
+            }
+
+            if (password === confirmPassword) {
+                matchDiv.innerHTML = '<small class="text-success"><i class="fas fa-check me-1"></i>Şifreler eşleşiyor</small>';
+            } else {
+                matchDiv.innerHTML = '<small class="text-danger"><i class="fas fa-times me-1"></i>Şifreler eşleşmiyor</small>';
+            }
+        }
+
+        document.getElementById('password').addEventListener('input', checkPasswordMatch);
+        document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
+
+        // Phone Number Formatting
+        document.getElementById('phone').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.startsWith('90')) {
+                value = value.substring(2);
+            }
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    this.value = '+90 ' + value;
+                } else if (value.length <= 6) {
+                    this.value = '+90 ' + value.substring(0, 3) + ' ' + value.substring(3);
+                } else if (value.length <= 8) {
+                    this.value = '+90 ' + value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6);
+                } else {
+                    this.value = '+90 ' + value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6, 8) + ' ' + value.substring(8, 10);
+                }
+            }
+        });
+
+        // Form Submit Loading
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Password match validation
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Şifreler eşleşmiyor!');
+                return;
+            }
+
+            const btn = document.getElementById('registerBtn');
+            const text = document.getElementById('registerText');
+            const spinner = document.getElementById('registerSpinner');
+
+            btn.disabled = true;
+            text.textContent = 'Kayıt oluşturuluyor...';
+            spinner.classList.remove('d-none');
+        });
+
+        // Form Validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .card {
+        border: none;
+        border-radius: 1rem;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+    .text-primary {
+        color: #667eea !important;
+    }
+
+    .alert-danger {
+        border-radius: 0.5rem;
+        border: none;
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .progress {
+        border-radius: 2px;
+    }
+
+    .modal-content {
+        border-radius: 1rem;
+        border: none;
+    }
+</style>

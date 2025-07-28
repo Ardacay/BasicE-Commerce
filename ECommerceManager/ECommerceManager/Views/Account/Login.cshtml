@@ -1,0 +1,198 @@
+﻿@model ECommerceManager.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid vh-100">
+    <div class="row h-100">
+        <div class="col-12 d-flex align-items-center justify-content-center">
+            <div class="card shadow-lg" style="max-width: 400px; width: 100%;">
+                <div class="card-body p-5">
+                    <!-- Logo ve Başlık -->
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
+                        <h2 class="card-title">Giriş Yap</h2>
+                        <p class="text-muted">Hesabınıza giriş yapın</p>
+                    </div>
+
+                    <!-- Hata Mesajları -->
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @Html.ValidationSummary(true, "Lütfen hataları düzeltin:")
+                        </div>
+                    }
+
+                    <!-- Login Form -->
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "needs-validation", @novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <!-- Email Input -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>E-posta Adresi
+                            </label>
+                            @Html.TextBoxFor(m => m.Email, new
+                                {
+                                    @class = "form-control",
+                                    @id = "email",
+                                    @placeholder = "ornek@email.com",
+                                    @type = "email",
+                                    @required = "required"
+                                })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <!-- Password Input -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Şifre
+                            </label>
+                            <div class="input-group">
+                                @Html.PasswordFor(m => m.Password, new
+                                    {
+                                        @class = "form-control",
+                                        @id = "password",
+                                        @placeholder = "Şifrenizi girin",
+                                        @required = "required"
+                                    })
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <!-- Remember Me ve Forgot Password -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.RememberMe, "Beni hatırla", new { @class = "form-check-label" })
+                            </div>
+                            <a href="@Url.Action("ForgotPassword", "Account")" class="text-decoration-none">
+                                Şifremi unuttum?
+                            </a>
+                        </div>
+
+                        <!-- Login Button -->
+                        <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">
+                            <span id="loginText">Giriş Yap</span>
+                            <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                        </button>
+                    }
+
+                    <!-- Divider -->
+                    <div class="text-center mb-3">
+                        <span class="text-muted">veya</span>
+                    </div>
+
+                    <!-- Register Link -->
+                    <div class="text-center">
+                        <p class="mb-0">
+                            Hesabınız yok mu?
+                            <a href="@Url.Action("Register", "Account")" class="text-decoration-none">
+                                Kayıt olun
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Password Toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const password = document.getElementById('password');
+            const icon = this.querySelector('i');
+
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                password.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Form Submit Loading
+        document.querySelector('form').addEventListener('submit', function() {
+            const btn = document.getElementById('loginBtn');
+            const text = document.getElementById('loginText');
+            const spinner = document.getElementById('loginSpinner');
+
+            btn.disabled = true;
+            text.textContent = 'Giriş yapılıyor...';
+            spinner.classList.remove('d-none');
+        });
+
+        // Basic Form Validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .card {
+        border: none;
+        border-radius: 1rem;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+    .text-primary {
+        color: #667eea !important;
+    }
+
+    .alert-danger {
+        border-radius: 0.5rem;
+        border: none;
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+</style>
