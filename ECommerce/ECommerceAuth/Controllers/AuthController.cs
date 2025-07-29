@@ -1,5 +1,6 @@
 ﻿using ECommerceAuth.Dtos;
 using ECommerceAuth.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,13 +28,14 @@ namespace ECommerceAuth.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        public async Task<IActionResult> Register( RegisterDto model)
         {
             var user = new AppUser
             {
                 UserName = model.Email,
                 Email = model.Email,
-                BirthDate = model.Birthday
+                BirthDate = model.BirthDate,
+                PhoneNumber=model.PhoneNumber
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -48,7 +50,7 @@ namespace ECommerceAuth.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null || await _userManager.CheckPasswordAsync(user, model.Password))
+            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 return Unauthorized("Invalid email or password");
             }
@@ -62,9 +64,9 @@ namespace ECommerceAuth.Controllers
             };
             foreach (var role in userRoles)
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
-            var authoSighnKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-            var token = new JwtSecurityToken(
-                issuer: _configuration["jwt:Issuer"],
+                var authoSighnKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+                var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 expires: DateTime.Now.AddHours(3),
                 claims: authClaims,
@@ -74,6 +76,26 @@ namespace ECommerceAuth.Controllers
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo
+            });
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) 
+                return Unauthorized();
+
+            var user= await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(new
+            {
+                user.Email,
+                user.UserName,
+                user.BirthDate,
+                roles = roles
             });
         }
     }

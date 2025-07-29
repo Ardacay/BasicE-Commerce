@@ -5,6 +5,7 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using ECommerceManager.Dtos.AccountDtos;
 namespace ECommerceManager.Controllers
 {
     public class AccountController : Controller
@@ -28,7 +29,7 @@ namespace ECommerceManager.Controllers
             var json = JsonConvert.SerializeObject(logmodel);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync("https://localhost:44336/api/Account/Login", content); /*5001*/
+            var response = await client.PostAsync("https://localhost:44336/api/Auth/Login/Login", content); 
             if (!response.IsSuccessStatusCode)
             {
                 ViewBag.Error = "Access Denied";
@@ -36,8 +37,12 @@ namespace ECommerceManager.Controllers
             }
             var jsonData = await response.Content.ReadAsStringAsync();
             dynamic tokendata = JsonConvert.DeserializeObject(jsonData)!;
-
-            string token = tokendata.ToString();
+            Response.Cookies.Append("access_token", tokendata.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.Parse(tokendata.Expiration.ToString())
+            });
+            string token = tokendata.token;
             var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
             var jwtToken = handler.ReadJwtToken(token);
 
@@ -62,7 +67,7 @@ namespace ECommerceManager.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterViewModel regmodel)
+        public async Task<IActionResult> Register( RegisterDto regmodel)
         {
             if (!ModelState.IsValid)
             {
@@ -73,7 +78,7 @@ namespace ECommerceManager.Controllers
             var json=JsonConvert.SerializeObject(regmodel);
             var content=new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync("https://localhost:44336/api/Account/Register", content);
+            var response = await client.PostAsync("https://localhost:44336/api/Auth/Register/Register", content);
             if (!response.IsSuccessStatusCode)
             {
                 ViewBag.Error = "Kayıt başarısız oldu.";
