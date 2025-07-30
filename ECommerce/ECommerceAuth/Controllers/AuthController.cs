@@ -1,5 +1,6 @@
 ﻿using ECommerceAuth.Dtos;
 using ECommerceAuth.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,26 +17,28 @@ namespace ECommerceAuth.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
 
 
-        public AuthController(UserManager<AppUser> userManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+        public AuthController(UserManager<AppUser> userManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _configuration = configuration;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register( RegisterDto model)
+        public async Task<IActionResult> Register(RegisterDto model)
         {
             var user = new AppUser
             {
                 UserName = model.Email,
                 Email = model.Email,
                 BirthDate = model.BirthDate,
-                PhoneNumber=model.PhoneNumber
+                PhoneNumber = model.PhoneNumber
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -50,10 +53,12 @@ namespace ECommerceAuth.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 return Unauthorized("Invalid email or password");
             }
+            await _signInManager.SignInAsync(user, false);
             var userRoles = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>
             {
@@ -64,29 +69,31 @@ namespace ECommerceAuth.Controllers
             };
             foreach (var role in userRoles)
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
-                var authoSighnKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-                var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                expires: DateTime.Now.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authoSighnKey, SecurityAlgorithms.HmacSha256)
-                );
+            var authoSighnKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            expires: DateTime.Now.AddHours(4),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authoSighnKey, SecurityAlgorithms.HmacSha256)
+            );
+            var writedToken = new JwtSecurityTokenHandler().WriteToken(token);
+
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+                token = writedToken
             });
         }
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetProfile()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null) 
+            if (userId == null)
                 return Unauthorized();
 
-            var user= await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return NotFound();
             var roles = await _userManager.GetRolesAsync(user);

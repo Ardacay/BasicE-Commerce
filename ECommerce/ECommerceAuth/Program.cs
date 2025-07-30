@@ -1,5 +1,6 @@
 using ECommerceAuth.Data;
 using ECommerceAuth.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,8 +12,6 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "Cookies";
-    options.DefaultChallengeScheme = "Cookies";
 })
 .AddCookie("Cookies", options =>
 {
@@ -119,9 +118,9 @@ using (var scope = app.Services.CreateScope())
         user.UserName = email;
         user.Email = email;
         //user.EmailConfirmed = true;
-       await userManager.CreateAsync(user, password);
+        await userManager.CreateAsync(user, password);
 
-       await userManager.AddToRoleAsync(user, "Admin");
+        await userManager.AddToRoleAsync(user, "Admin");
     }
 }
 

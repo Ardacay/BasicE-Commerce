@@ -1,0 +1,283 @@
+﻿@model ECommerceManager.Dtos.AccountDtos.ProfileDto
+
+@{
+    ViewData["Title"] = "Profil";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <!-- Başlık -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-center text-primary">
+                <i class="fas fa-user-circle me-2"></i>@Model.Name @Model.LastName
+            </h2>
+            <hr class="w-50 mx-auto">
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sol Panel - Profil Kartı -->
+        <div class="col-lg-4 mb-4">
+            <div class="card profile-summary shadow">
+                <div class="card-body text-center">
+                    <!-- Avatar -->
+                    <div class="profile-avatar mb-3">
+                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    </div>
+
+                    <!-- Kullanıcı Bilgileri -->
+                    <h4 class="card-title">@Model.Name @Model.LastName</h4>
+                    <p class="text-muted">@Model.Email</p>
+
+                    <!-- Durum Badge -->
+                    <span class="badge bg-success mb-3">Aktif Kullanıcı</span>
+
+                    <!-- İstatistikler -->
+                    <div class="row text-center mt-3">
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h5 class="text-primary mb-0">
+                                    @if (Model.BirthDate.HasValue)
+                                    {
+                                        @((DateTime.Now.Year - Model.BirthDate.Value.Year))
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </h5>
+                                <small class="text-muted">Yaş</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h5 class="text-success mb-0">180</h5>
+                                <small class="text-muted">Gün Üye</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h5 class="text-info mb-0">%95</h5>
+                                <small class="text-muted">Tamamlama</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Panel - Detay Bilgiler -->
+        <div class="col-lg-8">
+            <!-- Kişisel Bilgiler -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Kişisel Bilgiler
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-item">
+                                <strong class="text-muted">Ad:</strong>
+                                <div class="detail-value">
+                                    @(string.IsNullOrEmpty(Model.Name) ? "Belirtilmemiş" : Model.Name)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-item">
+                                <strong class="text-muted">Soyad:</strong>
+                                <div class="detail-value">
+                                    @(string.IsNullOrEmpty(Model.LastName) ? "Belirtilmemiş" : Model.LastName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-item">
+                                <strong class="text-muted">E-posta:</strong>
+                                <div class="detail-value">
+                                    @(string.IsNullOrEmpty(Model.Email) ? "Belirtilmemiş" : Model.Email)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-item">
+                                <strong class="text-muted">Telefon:</strong>
+                                <div class="detail-value">
+                                    @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Belirtilmemiş" : Model.PhoneNumber)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-item">
+                                <strong class="text-muted">Doğum Tarihi:</strong>
+                                <div class="detail-value">
+                                    @if (Model.BirthDate.HasValue)
+                                    {
+                                        @Model.BirthDate.Value.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+                                    }
+                                    else
+                                    {
+                                        <span>Belirtilmemiş</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-item">
+                                <strong class="text-muted">Üyelik Tarihi:</strong>
+                                <div class="detail-value">
+                                    @DateTime.Now.AddMonths(-6).ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hesap Durumu -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Hesap Durumu
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="account-status">
+                                <i class="fas fa-envelope-check fa-2x text-success mb-2"></i>
+                                <h6>E-posta</h6>
+                                <small class="badge bg-success">Doğrulanmış</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="account-status">
+                                <i class="fas fa-phone fa-2x text-warning mb-2"></i>
+                                <h6>Telefon</h6>
+                                <small class="badge bg-warning">
+                                    @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Beklemede" : "Doğrulanmış")
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="account-status">
+                                <i class="fas fa-lock fa-2x text-info mb-2"></i>
+                                <h6>Güvenlik</h6>
+                                <small class="badge bg-info">Aktif</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Aktiviteler -->
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>Son Aktiviteler
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-sign-in-alt text-success me-3"></i>
+                            <div>
+                                <strong>Sisteme giriş yapıldı</strong>
+                                <br><small class="text-muted">@DateTime.Now.AddHours(-2).ToString("dd.MM.yyyy HH:mm")</small>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-eye text-primary me-3"></i>
+                            <div>
+                                <strong>Profil görüntülendi</strong>
+                                <br><small class="text-muted">@DateTime.Now.AddDays(-1).ToString("dd.MM.yyyy HH:mm")</small>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-user-plus text-info me-3"></i>
+                            <div>
+                                <strong>Hesap oluşturuldu</strong>
+                                <br><small class="text-muted">@DateTime.Now.AddMonths(-6).ToString("dd.MM.yyyy HH:mm")</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-summary {
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .profile-avatar {
+        margin-bottom: 20px;
+    }
+
+    .stat-box {
+        padding: 15px 0;
+    }
+
+    .detail-item {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    .detail-value {
+        font-size: 1.1em;
+        font-weight: 500;
+        color: #495057;
+        margin-top: 5px;
+    }
+
+    .account-status {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+    .badge {
+        font-size: 0.75em;
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+
+  
+  
+    .detail-item {
+        margin-bottom: 15px;
+    }
+
+    .account-status {
+        margin-bottom: 20px;
+    }
+
+    }
+</style>

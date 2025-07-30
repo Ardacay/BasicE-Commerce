@@ -6,6 +6,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using ECommerceManager.Dtos.AccountDtos;
+using ECommerceManager.Dtos.TokenResult;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
 namespace ECommerceManager.Controllers
 {
     public class AccountController : Controller
@@ -15,50 +18,88 @@ namespace ECommerceManager.Controllers
         {
             _httpClientFactory = httpClientFactory;
         }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            var token = Request.Cookies["access_token"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest("Token alınamadı");
+            }
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync("https://localhost:44336/api/Auth/GetProfile");
+            if (!response.IsSuccessStatusCode)
+            {
+                return View("Error");
+            }
+            var json = await response.Content.ReadAsStringAsync();
+            var profile = JsonConvert.DeserializeObject<ProfileDto>(json);
+            return View(profile);
+        }
+
 
         [HttpGet]
         public IActionResult Login()
+
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel logmodel)
+        public async Task<IActionResult> Login(LoginDto logmodel)
         {
             var client = _httpClientFactory.CreateClient();
             var json = JsonConvert.SerializeObject(logmodel);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync("https://localhost:44336/api/Auth/Login/Login", content); 
+            var response = await client.PostAsync("https://localhost:44336/api/Auth/Login/Login", content);
             if (!response.IsSuccessStatusCode)
             {
                 ViewBag.Error = "Access Denied";
                 return View();
             }
             var jsonData = await response.Content.ReadAsStringAsync();
-            dynamic tokendata = JsonConvert.DeserializeObject(jsonData)!;
-            Response.Cookies.Append("access_token", tokendata.Token, new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTimeOffset.Parse(tokendata.Expiration.ToString())
-            });
-            string token = tokendata.token;
+            var tokendata = JsonConvert.DeserializeObject<TokenResult>(jsonData)!;
+
+
+
+           
+
+            string username = HttpContext.Request.Cookies["access_token"];
+
             var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
+            var jwtToken = handler.ReadJwtToken(tokendata.Token);
+
+           
+
 
             var claims = jwtToken.Claims.ToList();
-            claims.Add(new Claim("AccessToken", token));
+            claims.Add(new Claim("AccessToken", tokendata.Token));
+
+
+            Response.Cookies.Append("access_token", "TEST", new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = jwtToken.ValidTo
+            });
+
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Profile", "Account");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
+            Response.Cookies.Delete("access_token");
+            return RedirectToAction("Login", "Account");
         }
 
         [HttpGet]
@@ -67,16 +108,16 @@ namespace ECommerceManager.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register( RegisterDto regmodel)
+        public async Task<IActionResult> Register(RegisterDto regmodel)
         {
             if (!ModelState.IsValid)
             {
                 return View(regmodel);
             }
-            var client=_httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient();
 
-            var json=JsonConvert.SerializeObject(regmodel);
-            var content=new StringContent(json, Encoding.UTF8, "application/json");
+            var json = JsonConvert.SerializeObject(regmodel);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("https://localhost:44336/api/Auth/Register/Register", content);
             if (!response.IsSuccessStatusCode)
@@ -85,7 +126,7 @@ namespace ECommerceManager.Controllers
                 return View(regmodel);
             }
 
-          
+
             return RedirectToAction("Login", "Account");
 
         }
