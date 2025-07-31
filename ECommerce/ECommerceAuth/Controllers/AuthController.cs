@@ -30,6 +30,8 @@ namespace ECommerceAuth.Controllers
             _signInManager = signInManager;
         }
 
+    
+
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterDto model)
         {
@@ -38,7 +40,9 @@ namespace ECommerceAuth.Controllers
                 UserName = model.Email,
                 Email = model.Email,
                 BirthDate = model.BirthDate,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                FirstName=model.Name,
+                LastName=model.LastName
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -65,10 +69,15 @@ namespace ECommerceAuth.Controllers
                 new Claim(ClaimTypes.Name,user.UserName!),
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                new Claim("email", user.Email ?? ""),
+                new Claim("name", user.FirstName ?? ""),
+                new Claim("lastname", user.LastName ?? ""),
+                new Claim("phone", user.PhoneNumber ?? ""),
+                new Claim("birthdate", user.BirthDate.HasValue ? user.BirthDate.Value.ToString("yyyy-MM-dd") : "")
 
             };
             foreach (var role in userRoles)
-                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            authClaims.Add(new Claim(ClaimTypes.Role, role));
             var authoSighnKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
@@ -78,7 +87,6 @@ namespace ECommerceAuth.Controllers
             signingCredentials: new SigningCredentials(authoSighnKey, SecurityAlgorithms.HmacSha256)
             );
             var writedToken = new JwtSecurityTokenHandler().WriteToken(token);
-
             return Ok(new
             {
                 token = writedToken
@@ -102,6 +110,9 @@ namespace ECommerceAuth.Controllers
                 user.Email,
                 user.UserName,
                 user.BirthDate,
+                user.FirstName, 
+                user.LastName,
+                user.PhoneNumber,
                 roles = roles
             });
         }

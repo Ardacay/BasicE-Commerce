@@ -64,27 +64,19 @@ namespace ECommerceManager.Controllers
             var tokendata = JsonConvert.DeserializeObject<TokenResult>(jsonData)!;
 
 
-
-           
-
             string username = HttpContext.Request.Cookies["access_token"];
 
             var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
             var jwtToken = handler.ReadJwtToken(tokendata.Token);
 
-           
-
-
             var claims = jwtToken.Claims.ToList();
             claims.Add(new Claim("AccessToken", tokendata.Token));
 
-
-            Response.Cookies.Append("access_token", "TEST", new CookieOptions
+            Response.Cookies.Append("access_token", tokendata.Token, new CookieOptions
             {
                 HttpOnly = true,
                 Expires = jwtToken.ValidTo
             });
-
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);

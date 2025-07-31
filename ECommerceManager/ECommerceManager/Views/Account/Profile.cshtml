@@ -10,7 +10,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <h2 class="text-center text-primary">
-                <i class="fas fa-user-circle me-2"></i>@Model.Name @Model.LastName
+                <i class="fas fa-user-circle me-2"></i>@Model.FirstName @Model.LastName
             </h2>
             <hr class="w-50 mx-auto">
         </div>
@@ -27,7 +27,7 @@
                     </div>
 
                     <!-- Kullanıcı Bilgileri -->
-                    <h4 class="card-title">@Model.Name @Model.LastName</h4>
+                    <h4 class="card-title">@Model.FirstName @Model.LastName</h4>
                     <p class="text-muted">@Model.Email</p>
 
                     <!-- Durum Badge -->
@@ -82,7 +82,7 @@
                             <div class="detail-item">
                                 <strong class="text-muted">Ad:</strong>
                                 <div class="detail-value">
-                                    @(string.IsNullOrEmpty(Model.Name) ? "Belirtilmemiş" : Model.Name)
+                                    @(string.IsNullOrEmpty(Model.FirstName) ? "Belirtilmemiş" : Model.FirstName)
                                 </div>
                             </div>
                         </div>
