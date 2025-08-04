@@ -22,7 +22,9 @@ else
 		<thead>
 			<tr>
 				<th>
-					Kategori Adı
+					Category Name
+				</th><th>
+					Category Id
 				</th>
 				<th style="width: 200px;">İşlemler</th>
 			</tr>
@@ -33,6 +35,8 @@ else
 				<tr>
 					<td>
 						@Html.DisplayFor(modelItem => item.Name)
+					</td><td>
+						@Html.DisplayFor(modelItem => item.Id)
 					</td>
 					<td>
 						<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>

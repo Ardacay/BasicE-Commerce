@@ -18,7 +18,7 @@ namespace ECommerceAuth.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
-        //[HttpGet]
+        [Authorize(Roles ="Manager,Admin")]
         [HttpGet("GetAllUsersWithRoles")]
         public async Task<IActionResult> GetAllUsersWithRoles()
         {
@@ -39,6 +39,7 @@ namespace ECommerceAuth.Controllers
             }
             return Ok(result);
         }
+        [Authorize(Roles = "Manager,Admin")]
         [HttpGet("GetAllRoles")]
         public IActionResult GetAllRoles()
         {
@@ -46,37 +47,38 @@ namespace ECommerceAuth.Controllers
             {
                 r.Id,
                 r.Name
+
             }).ToList();
 
             return Ok(roles);
         }
 
+        //[HttpPost]
+        //[Authorize(Roles = "Member")]
+        //public async Task<IActionResult> ChangeRole(string userId, string newRole)
+        //{
+        //    var user = await _userManager.FindByIdAsync(userId);
+        //    if (user == null)
+        //        return NotFound();
+
+        //    var currentRoles = await _userManager.GetRolesAsync(user);
+
+        //    var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        //    if (!removeResult.Succeeded)
+        //        return BadRequest("Roller kaldırılırken hata oluştu.");
+
+        //    var addResult = await _userManager.AddToRoleAsync(user, newRole);
+        //    if (!addResult.Succeeded)
+        //        return BadRequest("Rol eklenirken hata oluştu.");
+
+        //    return RedirectToAction("Index");
+        //}
+        [Authorize(Roles = "Manager,Admin")]
         [HttpPost]
-        [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> ChangeRole(string userId, string newRole)
+        [Authorize/*(Roles = "Member")*/]
+        public async Task<IActionResult> UpdateUserRole(RoleUpdateDto dto)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return NotFound();
-
-            var currentRoles = await _userManager.GetRolesAsync(user);
-
-            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
-            if (!removeResult.Succeeded)
-                return BadRequest("Roller kaldırılırken hata oluştu.");
-
-            var addResult = await _userManager.AddToRoleAsync(user, newRole);
-            if (!addResult.Succeeded)
-                return BadRequest("Rol eklenirken hata oluştu.");
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> UpdateUserRole([FromBody] RoleUpdateDto dto)
-        {
-            if (dto == null || string.IsNullOrEmpty(dto.NewRole))
+            if (dto == null || string.IsNullOrEmpty(dto.Name))
                 return BadRequest("Geçersiz rol bilgisi.");
 
             var user = await _userManager.FindByIdAsync(dto.Id.ToString());
@@ -88,7 +90,7 @@ namespace ECommerceAuth.Controllers
             if (!removeResult.Succeeded)
                 return BadRequest("Roller kaldırılırken hata oluştu.");
 
-            var addResult = await _userManager.AddToRoleAsync(user, dto.NewRole);
+            var addResult = await _userManager.AddToRoleAsync(user, dto.Name);
             if (!addResult.Succeeded)
                 return BadRequest("Rol eklenirken hata oluştu.");
 

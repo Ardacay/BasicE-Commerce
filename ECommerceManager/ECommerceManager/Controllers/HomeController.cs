@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using ECommerceManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceManager.Controllers
@@ -13,6 +14,7 @@ namespace ECommerceManager.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             return View();

@@ -9,14 +9,17 @@ using ECommerceManager.Dtos.AccountDtos;
 using ECommerceManager.Dtos.TokenResult;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 namespace ECommerceManager.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        //private readonly SignInManager<IdentityUser> _signInManager;
         public AccountController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+            //_signInManager = signInManager;
         }
         [HttpGet]
         [Authorize]
@@ -41,14 +44,22 @@ namespace ECommerceManager.Controllers
 
 
         [HttpGet]
-        public IActionResult Login()
-
+        public IActionResult Login(string returnUrl)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+                else
+                    return RedirectToAction("Index", "Home");
+            }
+
+            ViewData["returnUrl"] = returnUrl; 
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginDto logmodel)
+        public async Task<IActionResult> Login(LoginDto logmodel, string returnUrl=null)
         {
             var client = _httpClientFactory.CreateClient();
             var json = JsonConvert.SerializeObject(logmodel);
@@ -82,6 +93,10 @@ namespace ECommerceManager.Controllers
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+              if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
             return RedirectToAction("Profile", "Account");
         }
 

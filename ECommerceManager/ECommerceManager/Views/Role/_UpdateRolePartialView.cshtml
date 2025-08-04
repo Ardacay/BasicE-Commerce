@@ -1,0 +1,24 @@
+﻿@model ECommerceManager.Dtos.RoleDtos.RoleUpdateDto
+
+@{
+	var userRoleList = ViewData["AllRoles"] as List<string>;
+}
+
+<form asp-controller="Role" asp-action="UpdateRole" method="post">
+	<input type="hidden" asp-for="Id" value="@Model.Id" />
+	<select asp-for="Name" class="form-select">
+		<option value="">Rol Seç</option>
+		@if (ViewData["AllRoles"] != null)
+		{
+			foreach (var role in userRoleList)
+			{
+				<option value="@role">@role</option>
+			}
+		}
+		else
+		{
+			<option disabled>Roller Yüklenemedi</option>
+		}
+	</select>
+	<button type="submit" class="btn btn-primary btn-sm mt-1">Kaydet</button>
+</form>

@@ -1,23 +1,25 @@
 ﻿@model ECommerceManager.Dtos.AccountDtos.LoginDto
 
+
+
+ 
+
 @{
     ViewData["Title"] = "Giriş Yap";
     Layout = "_Layout";
 }
 
 <div class="container-fluid vh-100">
-    <div class="row h-100"> 
+    <div class="row h-100">
         <div class="col-12 d-flex align-items-center justify-content-center">
             <div class="card shadow-lg" style="max-width: 400px; width: 100%;">
                 <div class="card-body p-5">
-                    <!-- Logo ve Başlık -->
                     <div class="text-center mb-4">
                         <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
                         <h2 class="card-title">Giriş Yap</h2>
                         <p class="text-muted">Hesabınıza giriş yapın</p>
                     </div>
 
-                    <!-- Hata Mesajları -->
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <div class="alert alert-danger" role="alert">
@@ -26,40 +28,27 @@
                         </div>
                     }
 
-                    <!-- Login Form -->
                     @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "needs-validation", @novalidate = "novalidate" }))
                     {
                         @Html.AntiForgeryToken()
 
-                        <!-- Email Input -->
+                        <!-- Gizli returnUrl input -->
+                        <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+
                         <div class="mb-3">
                             <label for="email" class="form-label">
                                 <i class="fas fa-envelope me-2"></i>E-posta Adresi
                             </label>
-                            @Html.TextBoxFor(m => m.Email, new
-                                {
-                                    @class = "form-control",
-                                    @id = "email",
-                                    @placeholder = "ornek@email.com",
-                                    @type = "email",
-                                    @required = "required"
-                                })
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @id = "email", @placeholder = "ornek@email.com", @type = "email", @required = "required" })
                             @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
                         </div>
 
-                        <!-- Password Input -->
                         <div class="mb-3">
                             <label for="password" class="form-label">
                                 <i class="fas fa-lock me-2"></i>Şifre
                             </label>
                             <div class="input-group">
-                                @Html.PasswordFor(m => m.Password, new
-                                    {
-                                        @class = "form-control",
-                                        @id = "password",
-                                        @placeholder = "Şifrenizi girin",
-                                        @required = "required"
-                                    })
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @id = "password", @placeholder = "Şifrenizi girin", @required = "required" })
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -67,36 +56,26 @@
                             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
                         </div>
 
-                        <!-- Remember Me ve Forgot Password -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
                                 @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input" })
                                 @Html.LabelFor(m => m.RememberMe, "Beni hatırla", new { @class = "form-check-label" })
                             </div>
-                            <a href="@Url.Action("ForgotPassword", "Account")" class="text-decoration-none">
-                                Şifremi unuttum?
-                            </a>
+                            <a href="@Url.Action("ForgotPassword", "Account")" class="text-decoration-none">Şifremi unuttum?</a>
                         </div>
 
-                        <!-- Login Button -->
                         <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">
                             <span id="loginText">Giriş Yap</span>
                             <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
                         </button>
                     }
 
-                    <!-- Divider -->
-                    <div class="text-center mb-3">
-                        <span class="text-muted">veya</span>
-                    </div>
+                    <div class="text-center mb-3"><span class="text-muted">veya</span></div>
 
-                    <!-- Register Link -->
                     <div class="text-center">
                         <p class="mb-0">
                             Hesabınız yok mu?
-                            <a href="@Url.Action("Register", "Account")" class="text-decoration-none">
-                                Kayıt olun
-                            </a>
+                            <a href="@Url.Action("Register", "Account")" class="text-decoration-none">Kayıt olun</a>
                         </p>
                     </div>
                 </div>
@@ -107,8 +86,8 @@
 
 @section Scripts {
     <script>
-        // Password Toggle
-        document.getElementById('togglePassword').addEventListener('click', function() {
+        // Şifre göster/gizle toggle
+        document.getElementById('togglePassword').addEventListener('click', function () {
             const password = document.getElementById('password');
             const icon = this.querySelector('i');
 
@@ -123,8 +102,8 @@
             }
         });
 
-        // Form Submit Loading
-        document.querySelector('form').addEventListener('submit', function() {
+        // Form gönderilirken butonu disable et, spinner göster
+        document.querySelector('form').addEventListener('submit', function () {
             const btn = document.getElementById('loginBtn');
             const text = document.getElementById('loginText');
             const spinner = document.getElementById('loginSpinner');
@@ -134,14 +113,14 @@
             spinner.classList.remove('d-none');
         });
 
-        // Basic Form Validation
-        (function() {
+        // Temel client-side validasyon (Bootstrap tarzı)
+        (function () {
             'use strict';
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 var forms = document.getElementsByClassName('needs-validation');
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (form.checkValidity() === false) {
+                Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
                             event.preventDefault();
                             event.stopPropagation();
                         }
@@ -154,6 +133,7 @@
 }
 
 <style>
+    /* Aynı önceki stilin */
     body {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

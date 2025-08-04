@@ -3,6 +3,7 @@ using ECommerceManager.Dtos.Order;
 using ECommerceManager.Dtos.Product;
 using ECommerceManager.Ýnterfaces;
 using ECommerceManager.Managers;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +11,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
-        options.LoginPath = "/Account/Login";
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.HttpOnly = true;
+
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+        options.SlidingExpiration = true;
+
+        options.LoginPath = "/Account/Login/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
@@ -30,7 +42,7 @@ builder.Services.AddHttpClient<IOrderManager, OrderManager>();
 
 builder.Services.AddHttpClient<ICategoryManager, CategoryManager>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:44321"); 
+    client.BaseAddress = new Uri("https://localhost:44321");
 });
 builder.Services.AddHttpClient<IProductManager, ProductManager>(client =>
 {
@@ -61,6 +73,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

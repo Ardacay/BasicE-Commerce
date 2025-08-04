@@ -11,5 +11,6 @@ namespace ECommerceManager.Dtos.RoleDtos
         public string Roles { get; set; }
         public List<string> AllRoles { get; set; }  
         public string SelectedRole { get; set; }
+    
     }
 }
