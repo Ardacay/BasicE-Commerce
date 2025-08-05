@@ -58,6 +58,16 @@ namespace ECommerceManager.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory([FromBody]CategoryDto Dto)
+        {
+            if (!ModelState.IsValid) return View(Dto);
+            var json= JsonConvert.SerializeObject(await _categoryManager.CreateAsync(Dto));
+            return Content(json,"ApplicationBuilder/json");
+
+
+        }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {

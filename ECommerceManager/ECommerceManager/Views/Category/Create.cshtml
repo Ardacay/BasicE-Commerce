@@ -7,31 +7,56 @@
 <h1>Create</h1>
 
 <h4>Category</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form id="createForm">
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label for="Name">Name</label>
+                <input id="Name" name="Name" class="form-control" />
+                <span id="name-validation" class="text-danger"></span>
             </div>
             <br />
-          
             <div class="form-group">
-                <input type="submit" value="Create" formmethod="post" class="btn btn-outline-success" />
+                <button type="submit" class="btn btn-outline-success">Create</button>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a href="/Category/Index">Back to List</a>
 </div>
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#createForm").on("submit", function (e) {
+            e.preventDefault();
+            const name = $("#Name").val();
+            $.ajax({
+                url: "/Category/CreateCategory",
+                type: "Post",
+                contentType: "application/json",
+                data: JSON.stringify({ Name: name }),
+                succes: function (response) {
+                    alert("category add succes");
+                    window.location.href = "/Category/Index";
+                },
+                error: function (xhr) {
+                    if (xhr.responseJSON && xhr..responseJSON.error && xhr.response.Name) {
+                        $("#name-validation").text(xhr.responseJSON.error.Name[0]);
+                    }
+                    else {
+                        alert("hata oluştu");
+                    }
+                }
+            });
+        });
+
+
+    });
+</script>

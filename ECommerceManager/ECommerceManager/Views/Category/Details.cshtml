@@ -13,7 +13,7 @@
 
         <dt class="col-sm-2"> id </dt>
         <dd class="col-sm-10" id="cat-id"></dd>
-        </dd>
+    
         <dt class="col-sm-2">Name
         </dt>
         <dd class="col-sm-10" id="cat-name"> </dd>
@@ -23,28 +23,25 @@
     <a asp-action="Index">Back to List</a>
 
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    $(document).ready(function () {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get("id");
-
         if (!id) {
-            alert("category id not found in query string");
+            alert("category id not foumd");
             return;
         }
-        fetch(`/Category/GetCategoryDetails?Id=${id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("veri alınamadı")
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById("cat-id").textContent = data.Id;
-                document.getElementById("cat-name").textContent = data.Name;
-            })
-            .catch(error => {
-                console.error("Error Fetching", error);
-            });
+        $.ajax({
+            url: `/Category/GetCategoryDetails?Id=${id}`,
+            type: "GET",
+            success: function (data) {
+                $("#cat-id").text(data.Id);
+                $("#cat-name").text(data.Name);
+            },
+            error: function (xhr, status, error) {
+                console.error("Veri alınamadı", error);
+            }
+        });
     });
 </script>

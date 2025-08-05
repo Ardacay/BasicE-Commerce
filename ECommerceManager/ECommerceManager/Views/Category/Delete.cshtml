@@ -38,7 +38,7 @@
             })
             .then(data => {
                 document.getElementById("cat-id").textContent = data.Id;
-                document.getElementById("cat-name").textContent = data.Nsame;
+                document.getElementById("cat-name").textContent = data.Name;
             })
             .catch(error => {
                 console.error("error fetching", error);
