@@ -34,7 +34,6 @@ namespace ECommerceManager.Managers
             return JsonConvert.DeserializeObject<CategoryDto>(contentStr);
 
         }
-
         public async Task<CategoryDto> CreateAsync(CategoryDto dto)
         {
             var url = $"{_baseUrl}/CreateCategoryies";

@@ -11,24 +11,37 @@
     <h4>Category</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
+        <dt class="col-sm-2">Id</dt>
+        <dd class="col-sm-10" id="cat-id">
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        
+        <dt class="col-sm-2"> Name </dt>
+        <dd class="col-sm-10" id="cat-name"></dd>
     </dl>
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    <button id="delete-btn" class="btn btn-danger">Delete</button>
+    <a href="/Category/Index">Back to List</a>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search)
+        const id = urlParams.get("id");
+        if (!id) {
+            alert("id not found");
+            return;
+        }
+        fetch(`/Category/DeleteById?Id=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("veri alınamadı");
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("cat-id").textContent = data.Id;
+                document.getElementById("cat-name").textContent = data.Nsame;
+            })
+            .catch(error => {
+                console.error("error fetching", error);
+            });
+    })
+</script>

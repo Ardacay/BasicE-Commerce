@@ -2,49 +2,56 @@
 
 
 @{
-	ViewData["Title"] = "Kategoriler";
+    ViewData["Title"] = "Kategoriler";
 }
 
 <h1>Category List</h1>
-
 <p>
-	<a asp-action="Create" class="btn btn-success">Add New Category</a>
+    <a asp-action=" Create" class="btn btn-success">Add New Category</a>
 </p>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th> Category Name</th>
+            <th>Category Id</th>
+            <th style="width: 200px">İşlemler</th>
+        </tr>
+    </thead>
+    <tbody id="categoryTableBody">
+    </tbody>
+</table>
+<div id="error" style="color:red;"></div>
 
-@if (Model == null)
-{
-	<p>Gösterilecek kategori bulunamadı.</p>
-}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/Category/GetAllCategories")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Veriler alınamadı");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tbody = document.getElementById("categoryTableBody");
+                data.forEach(item => {
+                    const row = document.createElement("tr");
 
-else
-{
-	<table class="table table-hover">
-		<thead>
-			<tr>
-				<th>
-					Category Name
-				</th><th>
-					Category Id
-				</th>
-				<th style="width: 200px;">İşlemler</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Model)
-			{
-				<tr>
-					<td>
-						@Html.DisplayFor(modelItem => item.Name)
-					</td><td>
-						@Html.DisplayFor(modelItem => item.Id)
-					</td>
-					<td>
-						<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
-						<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Details</a>
-						<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
-}
+                    row.innerHTML = `
+                            <td>${item.Name}</td>
+                            <td>${item.Id}</td>
+                            <td>
+                                <a href="/Category/Edit/?id=${item.Id}" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="/Category/Details/?id=${item.Id}" class="btn btn-warning btn-sm">Details</a>
+                                <a href="/Category/Delete/?id=${item.Id}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        `;
+
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                document.getElementById("error").textContent = error.message;
+            });
+    });
+
+</script>

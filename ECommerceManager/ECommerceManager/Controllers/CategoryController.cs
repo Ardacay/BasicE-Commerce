@@ -4,7 +4,9 @@ using ECommerceManager.İnterfaces;
 using ECommerceManager.Managers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ECommerceManager.Controllers
 {
@@ -18,8 +20,14 @@ namespace ECommerceManager.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var categories = await _categoryManager.GetAllAsync();
-            return View(categories);
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            var json = JsonConvert.SerializeObject(await _categoryManager.GetAllAsync());
+            return Content(json, "application/json");
         }
 
         public async Task<IActionResult> Details(int id)
@@ -27,6 +35,13 @@ namespace ECommerceManager.Controllers
 
             var categoryDetails = await _categoryManager.GetByIdAsync(id);
             return View(categoryDetails);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetCategoryDetails(int id)
+        {
+
+            var json = JsonConvert.SerializeObject(await _categoryManager.GetByIdAsync(id));
+            return Content(json, "application/json");
         }
 
         public IActionResult Create()
@@ -63,6 +78,11 @@ namespace ECommerceManager.Controllers
         {
             var categories = await _categoryManager.GetByIdAsync(id);
             return View(categories);
+        }
+        public async Task<IActionResult> DeleteById(int id)
+        {
+            var json = JsonConvert.SerializeObject(await _categoryManager.GetByIdAsync(id));
+            return Content(json,"application/json");
         }
 
         [HttpPost, ActionName("Delete")]
