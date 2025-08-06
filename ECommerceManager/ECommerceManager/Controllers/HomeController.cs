@@ -17,13 +17,20 @@ namespace ECommerceManager.Controllers
         [Authorize]
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                // Kullanýcý login olmuþsa Panel/Dashboard'a yönlendir
+                return RedirectToAction("Profile", "Account");
+            }
+
+            // Login deðilse anasayfa gösterilir
             return View();
         }
 
         public IActionResult Privacy()
         {
             return View();
-        } 
+        }
         public IActionResult Login()
         {
             return View();
@@ -32,7 +39,7 @@ namespace ECommerceManager.Controllers
         {
             return View();
         }
-        
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

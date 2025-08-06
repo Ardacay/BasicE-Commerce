@@ -54,7 +54,7 @@ namespace ECommerceManager.Controllers
                     return RedirectToAction("Index", "Home");
             }
 
-            ViewData["returnUrl"] = returnUrl; 
+            ViewData["returnUrl"] = returnUrl;
             return View();
         }
 

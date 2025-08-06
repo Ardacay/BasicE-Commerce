@@ -42,12 +42,12 @@
                 type: "Post",
                 contentType: "application/json",
                 data: JSON.stringify({ Name: name }),
-                succes: function (response) {
+                success: function (response) {
                     alert("category add succes");
                     window.location.href = "/Category/Index";
                 },
                 error: function (xhr) {
-                    if (xhr.responseJSON && xhr..responseJSON.error && xhr.response.Name) {
+                    if (xhr.responseJSON && xhr.responseJSON.error && xhr.response.Name) {
                         $("#name-validation").text(xhr.responseJSON.error.Name[0]);
                     }
                     else {

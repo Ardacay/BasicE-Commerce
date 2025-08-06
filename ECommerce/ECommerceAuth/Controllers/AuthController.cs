@@ -82,7 +82,7 @@ namespace ECommerceAuth.Controllers
             var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
-            expires: DateTime.Now.AddHours(4),
+            expires: DateTime.UtcNow.AddHours(4),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authoSighnKey, SecurityAlgorithms.HmacSha256)
             );

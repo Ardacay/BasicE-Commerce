@@ -13,12 +13,12 @@ namespace ECommerceAuth.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public RoleController(UserManager<AppUser> userManager, RoleManager<IdentityRole>  roleManager)
+        public RoleController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _roleManager = roleManager;
             _userManager = userManager;
         }
-        [Authorize(Roles ="Manager,Admin")]
+        [Authorize(Roles = "Manager,Admin")]
         [HttpGet("GetAllUsersWithRoles")]
         public async Task<IActionResult> GetAllUsersWithRoles()
         {
@@ -75,7 +75,6 @@ namespace ECommerceAuth.Controllers
         //}
         [Authorize(Roles = "Manager,Admin")]
         [HttpPost]
-        [Authorize/*(Roles = "Member")*/]
         public async Task<IActionResult> UpdateUserRole(RoleUpdateDto dto)
         {
             if (dto == null || string.IsNullOrEmpty(dto.Name))

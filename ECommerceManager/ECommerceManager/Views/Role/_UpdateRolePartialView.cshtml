@@ -4,11 +4,11 @@
 	var userRoleList = ViewData["AllRoles"] as List<string>;
 }
 
-<form asp-controller="Role" asp-action="UpdateRole" method="post">
+<form class="role-update-form" data-user-id="@Model.Id" method="post">
 	<input type="hidden" asp-for="Id" value="@Model.Id" />
 	<select asp-for="Name" class="form-select">
-		<option value="">Rol Seç</option>
-		@if (ViewData["AllRoles"] != null)
+		<option value="">Select Role</option>
+		@if (userRoleList != null)
 		{
 			foreach (var role in userRoleList)
 			{
