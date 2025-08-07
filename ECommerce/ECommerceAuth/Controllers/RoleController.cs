@@ -43,13 +43,11 @@ namespace ECommerceAuth.Controllers
         [HttpGet("GetAllRoles")]
         public IActionResult GetAllRoles()
         {
-            var roles = _roleManager.Roles.Select(r => new
+            var roles = _roleManager.Roles.Select(role => new RoleDto
             {
-                r.Id,
-                r.Name
-
-            }).ToList();
-
+                Id = role.Id,
+                Name = role.Name
+            });
             return Ok(roles);
         }
 
@@ -77,21 +75,24 @@ namespace ECommerceAuth.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateUserRole(RoleUpdateDto dto)
         {
-            if (dto == null || string.IsNullOrEmpty(dto.Name))
+            if (dto == null || string.IsNullOrEmpty(dto.UserId) || string.IsNullOrEmpty(dto.RoleId))
                 return BadRequest("Geçersiz rol bilgisi.");
 
-            var user = await _userManager.FindByIdAsync(dto.Id.ToString());
+            var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
             if (user == null)
-                return NotFound("Kullanıcı bulunamadı.");
+                return NotFound("Kullanıcı bulunamadı üye değil misin knk???.");
 
             var currentRoles = await _userManager.GetRolesAsync(user);
             var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
             if (!removeResult.Succeeded)
-                return BadRequest("Roller kaldırılırken hata oluştu.");
+                return BadRequest("Rolleri kaldıramıyoruzz canım hata verdimm.");
+            var role = await _roleManager.FindByIdAsync(dto.RoleId);
+            if (role == null)
+                return BadRequest("Rol bulunamadı.");
 
-            var addResult = await _userManager.AddToRoleAsync(user, dto.Name);
+            var addResult = await _userManager.AddToRoleAsync(user, role.Name);
             if (!addResult.Succeeded)
-                return BadRequest("Rol eklenirken hata oluştu.");
+                return BadRequest("Rol ekleyemiyorum canımm hata verdimm.");
 
             return Ok("Role Updated");
         }

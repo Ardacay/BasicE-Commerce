@@ -1,5 +1,5 @@
-﻿@using ECommerceManager.Dtos.RoleDtos
-@model List<UserRoleDto>
+﻿@*@using ECommerceManager.Dtos.RoleDtos*@
+@model ECommerceManager.Dtos.RoleDtos.UserWithAllRolesDto
 
 <table class="table table-bordered">
     <thead>
@@ -10,50 +10,40 @@
             <th>Yeni Rol Ata</th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.UserName</td>
-                <td>@user.FullName</td>
-                <td>@user.Roles</td>
-                <td>
-                    @{
-                        await Html.RenderPartialAsync("_UpdateRolePartialView", new RoleUpdateDto { Id = user.Id }, new ViewDataDictionary(ViewData) { { "ARDA", "X" } });
-                    }
-                </td>
-            </tr>
+    <tbody id="updateDiv">
+        @{
+            await Html.RenderPartialAsync("_UpdateRolePartialView", Model, new ViewDataDictionary(ViewData));
         }
     </tbody>
 </table>
 @section Scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $(".role-update-form").on("submit", function (e) {
-                e.preventDefault();
-                const form = $(this);
-                const userId = form.data("user-id");
-                const selectedRole = form.find("select").val();
-                let postData = {
-                    Id: userId,
-                    Name: selectedRole
-                };
-                $.ajax({
-                    url: "@Url.Action("UpdateRoleAjax")",
-                    type: "POST",
-                    contentType: "application/json",
-                    dataType:"json",
-                    data: JSON.stringify(postData),
-                    success: function (response) {
-                        if (response.isSucceeded) alert("Başarılı");
-                        else alert(response.message);
+        $(document).on("submit", ".role-update-form", function (e) {
+            e.preventDefault();
+            const form = $(this);
+            const userId = form.data("user-id");
+            const selectedRole = form.find("select").val();
+            let postData = {
+                UserId: userId,
+                RoleId: selectedRole
+            };
 
-                    },
-                    error: function (xhr) {
-                        alert("Hata oluştu: " + xhr.responseText);
+            $.ajax({
+                url: "@Url.Action("UpdateRoleAjax")",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(postData),
+                success: function (response) {
+                    if (response) {
+                        $("#updateDiv").html(response);
+                    } else {
+                        alert("XD");
                     }
-                });
+                },
+                error: function (xhr) {
+                    alert("Hata oluştu: " + xhr.responseText);
+                }
             });
         });
     </script>

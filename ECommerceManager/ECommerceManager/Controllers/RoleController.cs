@@ -1,4 +1,5 @@
 ﻿using ECommerceManager.Dtos.RoleDtos;
+using ECommerceManager.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -24,58 +25,63 @@ namespace ECommerceManager.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var x = 9;
-            var url = $"{_baseUrl}/GetAllUsersWithRoles/GetAllUsersWithRoles";
-            //var client = _httpClientFactory.CreateClient();
+            //var url = $"{_baseUrl}/GetAllUsersWithRoles/GetAllUsersWithRoles";
+            ////var client = _httpClientFactory.CreateClient();
             //var token = Request.Cookies["access_token"];
             //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _client.GetAsync(url);
-            if (!response.IsSuccessStatusCode)
-                return View("Error");
-            var json = await response.Content.ReadAsStringAsync();
-            var users = JsonConvert.DeserializeObject<List<UserRoleDto>>(json);
-            var urlRole = $"{_baseUrl}/GetAllRoles/GetAllRoles";
-            var responseRole = await _client.GetAsync(urlRole);
+            //var response = await _client.GetAsync(url);
+            //if (!response.IsSuccessStatusCode)
+            //{
+            //    var errorContent = await response.Content.ReadAsStringAsync();
+            //    return View(errorContent);
+            //}
+            //var json = await response.Content.ReadAsStringAsync();
+            //var users = JsonConvert.DeserializeObject<List<UserRoleDto>>(json);
+            //var urlRole = $"{_baseUrl}/GetAllRoles/GetAllRoles";
+            //var responseRole = await _client.GetAsync(urlRole);
 
-            if (responseRole.IsSuccessStatusCode)
-            {
-                var jsonRole = await responseRole.Content.ReadAsStringAsync();
-                var roles = JsonConvert.DeserializeObject<List<RoleUpdateDto>>(jsonRole);
-                ViewBag.AllRoles = roles.Select(r => r.Name).ToList();
-            }
-            return View(users);
+            //if (responseRole.IsSuccessStatusCode)
+            //{
+            //    var jsonRole = await responseRole.Content.ReadAsStringAsync();
+            //    var roles = JsonConvert.DeserializeObject<List<RoleUpdateDto>>(jsonRole);
+            //    ViewBag.AllRoles = roles.Select(r => r.Name).ToList();
+            //}
+            //return View(users);
+            var userWithAllRoles = await GetUserWithAllRoles();
+            return View(userWithAllRoles);
         }
 
-        //public async Task<IActionResult> GiveRole()
-        //{
-        //    List<UserRoleDto> users = new();
+        private async Task<UserWithAllRolesDto> GetUserWithAllRoles()
+        {
+            var token = Request.Cookies["access_token"];
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var userUrl = $"{_baseUrl}/GetAllUsersWithRoles/GetAllUsersWithRoles";
+            var userResponse = await _client.GetAsync(userUrl);
 
-        //    using (var client = _httpClientFactory.CreateClient())
-        //    {
-        //        var response = await client.GetAsync("https://localhost:44336/api/User/GetAllUsersWithRoles");
+            if (!userResponse.IsSuccessStatusCode)
+                return new UserWithAllRolesDto();
 
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            var json = await response.Content.ReadAsStringAsync();
-        //            users = JsonConvert.DeserializeObject<List<UserRoleDto>>(json);
-        //        }
+            var userJson = await userResponse.Content.ReadAsStringAsync();
+            var users = JsonConvert.DeserializeObject<List<UserRoleDto>>(userJson);
 
-        //    }
-        //    using (var client = _httpClientFactory.CreateClient())
-        //    {
-        //        var response = await client.GetAsync("https://localhost:44336/api/Role/GetAllRoles");
+            var roleUrl = $"{_baseUrl}/GetAllRoles/GetAllRoles";
+            var roleResponse = await _client.GetAsync(roleUrl);
+            var allRoles = new List<RoleDto>();
 
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            var json = await response.Content.ReadAsStringAsync();
-        //            var roles = JsonConvert.DeserializeObject<List<UserRoleDto>>(json);
-        //            ViewBag.AllRoles = roles.Select(r => r.Roles).ToList();
-        //        }
-        //    }
-        //    return View(users);
-        //}
+            if (roleResponse.IsSuccessStatusCode)
+            {
+                var roleJson = await roleResponse.Content.ReadAsStringAsync();
+                allRoles = JsonConvert.DeserializeObject<List<RoleDto>>(roleJson);
+            }
 
+            return new UserWithAllRolesDto
+            {
+                Users = users,
+                AllRoles = allRoles,
+                RoleUpdateDto = new RoleUpdateDto()
+            };
+        }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRole(RoleUpdateDto dto)
@@ -87,8 +93,9 @@ namespace ECommerceManager.Controllers
 
             var content = new StringContent(JsonConvert.SerializeObject(new RoleUpdateDto
             {
-                Id = dto.Id,
-                Name = dto.Name,
+                UserId = dto.UserId,
+                RoleId = dto.RoleId,
+                //Name = dto.Name,
             }), Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync(url, content);
@@ -102,18 +109,19 @@ namespace ECommerceManager.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
-        public async Task<ActionResult> UpdateRoleAjax([FromBody] RoleUpdateDto dto)
+        public async Task<IActionResult> UpdateRoleAjax([FromBody] RoleUpdateDto dto)
         {
             var url = $"{_baseUrl}/UpdateUserRole";
             //var client = _httpClientFactory.CreateClient();
             var token = Request.Cookies["access_token"];
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            if (dto.Id.IsNullOrEmpty() || dto.Name.IsNullOrEmpty())
-                return Json(new { IsSucceeded = false , Message = "Id veya Rol İsmi zorunlu alandır!"});
+            if (dto.UserId.IsNullOrEmpty() || dto.RoleId.IsNullOrEmpty())
+                return Json(new { IsSucceeded = false, Message = "Id veya Rol İsmi zorunlu alandır!" });
             var content = new StringContent(JsonConvert.SerializeObject(new RoleUpdateDto
             {
-                Id = dto.Id,
-                Name = dto.Name,
+                UserId = dto.UserId,
+                RoleId = dto.RoleId,
+                //Name = dto.Name,
             }), Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync(url, content);
@@ -122,8 +130,9 @@ namespace ECommerceManager.Controllers
             {
                 return Json(new { IsSucceeded = false, Message = "Sunucu hatası!" });
             }
+            var updateViewModel = await GetUserWithAllRoles();
 
-            return Json(new { IsSucceeded = true });
+            return PartialView("_UpdateRolePartialView", updateViewModel);
         }
 
     }

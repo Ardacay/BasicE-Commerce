@@ -68,8 +68,8 @@ namespace ECommerceManager.Controllers
             var response = await client.PostAsync("https://localhost:44336/api/Auth/Login/Login", content);
             if (!response.IsSuccessStatusCode)
             {
-                ViewBag.Error = "Access Denied";
-                return View();
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return View(errorContent);
             }
             var jsonData = await response.Content.ReadAsStringAsync();
             var tokendata = JsonConvert.DeserializeObject<TokenResult>(jsonData)!;

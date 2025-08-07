@@ -7,42 +7,31 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllersWithViews();
-
+// Cookie ile kimlik doðrulama (kullanýcý oturumlarý için)
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-    {
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
-        options.Cookie.HttpOnly = true;
-
-        options.ExpireTimeSpan = TimeSpan.FromDays(1);
-        options.SlidingExpiration = true;
-
-        options.LoginPath = "/Account/Login/Login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
-    });
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.SlidingExpiration = true;
+    options.LoginPath = "/Account/Login/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
 
 builder.Services.AddAuthorization();
+
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddHttpClient<ICategoryManager, CategoryManager>();
-builder.Services.AddHttpClient<IProductManager, ProductManager>();
-builder.Services.AddHttpClient<IOrderManager, OrderManager>();
-
-//builder.Services.AddScoped<ICategoryManager, CategoryManager>();
-//builder.Services.AddScoped<IProductManager, ProductManager>();
-//builder.Services.AddScoped<IOrderManager, OrderManager>();
-
+// HttpClient'ler API adresiyle birlikte tanýmlanýyor
 builder.Services.AddHttpClient<ICategoryManager, CategoryManager>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:44321");
+    client.BaseAddress = new Uri("https://localhost:44321"); // API adresi
 });
 builder.Services.AddHttpClient<IProductManager, ProductManager>(client =>
 {
@@ -53,14 +42,11 @@ builder.Services.AddHttpClient<IOrderManager, OrderManager>(client =>
     client.BaseAddress = new Uri("https://localhost:44321");
 });
 
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -69,6 +55,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

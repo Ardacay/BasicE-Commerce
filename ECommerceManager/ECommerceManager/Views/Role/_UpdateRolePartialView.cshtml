@@ -1,24 +1,33 @@
-﻿@model ECommerceManager.Dtos.RoleDtos.RoleUpdateDto
+﻿@*@using ECommerceManager.Dtos.RoleDtos*@
+@model ECommerceManager.Dtos.RoleDtos.UserWithAllRolesDto
 
-@{
-	var userRoleList = ViewData["AllRoles"] as List<string>;
+@foreach (var user in Model.Users)
+{
+    <tr>
+        <td>@user.UserName</td>
+        <td>@user.FullName</td>
+        <td>@user.Roles</td>
+        <td>
+
+            <form class="role-update-form" data-user-id="@user.Id" method="post">
+                <input type="hidden" asp-for="RoleUpdateDto.UserId" value="@user.Id" />
+                <select asp-for="RoleUpdateDto.RoleId" class="form-select">
+                    <option value="">Select Role</option>
+                    @if (Model.AllRoles != null)
+                    {
+                        foreach (var role in Model.AllRoles)
+                        {
+                            <option value="@role.Id">@role.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        <option disabled>Roller Yüklenemedi</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm mt-1">Kaydet</button>
+            </form>
+        </td>
+    </tr>
 }
 
-<form class="role-update-form" data-user-id="@Model.Id" method="post">
-	<input type="hidden" asp-for="Id" value="@Model.Id" />
-	<select asp-for="Name" class="form-select">
-		<option value="">Select Role</option>
-		@if (userRoleList != null)
-		{
-			foreach (var role in userRoleList)
-			{
-				<option value="@role">@role</option>
-			}
-		}
-		else
-		{
-			<option disabled>Roller Yüklenemedi</option>
-		}
-	</select>
-	<button type="submit" class="btn btn-primary btn-sm mt-1">Kaydet</button>
-</form>
