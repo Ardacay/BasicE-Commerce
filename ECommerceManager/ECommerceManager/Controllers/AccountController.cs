@@ -59,7 +59,7 @@ namespace ECommerceManager.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginDto logmodel, string returnUrl=null)
+        public async Task<IActionResult> Login(LoginDto logmodel, string returnUrl = null)
         {
             var client = _httpClientFactory.CreateClient();
             var json = JsonConvert.SerializeObject(logmodel);
@@ -93,10 +93,10 @@ namespace ECommerceManager.Controllers
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-              if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
             return RedirectToAction("Profile", "Account");
         }
 
@@ -136,6 +136,11 @@ namespace ECommerceManager.Controllers
 
             return RedirectToAction("Login", "Account");
 
+        }
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

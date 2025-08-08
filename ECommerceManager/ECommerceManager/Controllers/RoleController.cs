@@ -21,7 +21,7 @@ namespace ECommerceManager.Controllers
             _httpClientFactory = httpClientFactory;
             _client = _httpClientFactory.CreateClient();
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         [Authorize]
         public async Task<IActionResult> Index()
         {

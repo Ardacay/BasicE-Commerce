@@ -2,6 +2,7 @@
 using ECommerceManager.Dtos.Order;
 using ECommerceManager.İnterfaces;
 using ECommerceManager.Managers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceManager.Controllers
@@ -14,7 +15,7 @@ namespace ECommerceManager.Controllers
         {
             _orderManager = orderManager;
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Index()
         {
             var orders = await _orderManager.GetAllAsync();
@@ -26,7 +27,7 @@ namespace ECommerceManager.Controllers
             var order = await _orderManager.GetByIdAsync(id);
             return View(order);
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
             return View();

@@ -1,6 +1,7 @@
 ﻿using ECommerceManager.Dtos.Product;
 using ECommerceManager.Managers;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -16,6 +17,7 @@ namespace ECommerceManager.Controllers
             _productManager = productManager;
             _categoryManager = categoryManager;
         }
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Index()
         {
             var products = await _productManager.GetAllAsync();
@@ -29,6 +31,7 @@ namespace ECommerceManager.Controllers
             var product = await _productManager.GetByIdAsync(id);
             return View(product);
         }
+        [Authorize(Roles ="Admin,Manager")]
         public IActionResult Create()
         {
             return View();

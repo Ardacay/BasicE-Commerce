@@ -18,6 +18,7 @@ namespace ECommerceManager.Controllers
         {
             _categoryManager = categoryManager;
         }
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Index()
         {
             return View();
@@ -29,7 +30,7 @@ namespace ECommerceManager.Controllers
             var json = JsonConvert.SerializeObject(await _categoryManager.GetAllAsync());
             return Content(json, "application/json");
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Details(int id)
         {
 
@@ -43,7 +44,7 @@ namespace ECommerceManager.Controllers
             var json = JsonConvert.SerializeObject(await _categoryManager.GetByIdAsync(id));
             return Content(json, "application/json");
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
             return View();
@@ -57,13 +58,13 @@ namespace ECommerceManager.Controllers
 
 
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody]CategoryDto Dto)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto Dto)
         {
             if (!ModelState.IsValid) return View(Dto);
-            var json= JsonConvert.SerializeObject(await _categoryManager.CreateAsync(Dto));
-            return Content(json,"ApplicationBuilder/json");
+            var json = JsonConvert.SerializeObject(await _categoryManager.CreateAsync(Dto));
+            return Content(json, "ApplicationBuilder/json");
 
 
         }
@@ -92,7 +93,7 @@ namespace ECommerceManager.Controllers
         public async Task<IActionResult> DeleteById(int id)
         {
             var json = JsonConvert.SerializeObject(await _categoryManager.GetByIdAsync(id));
-            return Content(json,"application/json");
+            return Content(json, "application/json");
         }
 
         [HttpPost, ActionName("Delete")]
