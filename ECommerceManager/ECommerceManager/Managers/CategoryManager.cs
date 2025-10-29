@@ -50,7 +50,6 @@ namespace ECommerceManager.Managers
             var response = await _httpClient.PostAsJsonAsync(url, dto);
             var responseString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<CategoryDto>(responseString);
-
         }
 
         public async Task<bool> DeleteAsync(int id)

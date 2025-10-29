@@ -80,19 +80,19 @@ namespace ECommerceAuth.Controllers
 
             var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
             if (user == null)
-                return NotFound("Kullanıcı bulunamadı üye değil misin knk???.");
+                return NotFound("Kullanıcı bulunamadı.");
 
             var currentRoles = await _userManager.GetRolesAsync(user);
             var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
             if (!removeResult.Succeeded)
-                return BadRequest("Rolleri kaldıramıyoruzz canım hata verdimm.");
+                return BadRequest("Rolleri kaldıramıyoruz.");
             var role = await _roleManager.FindByIdAsync(dto.RoleId);
             if (role == null)
                 return BadRequest("Rol bulunamadı.");
 
             var addResult = await _userManager.AddToRoleAsync(user, role.Name);
             if (!addResult.Succeeded)
-                return BadRequest("Rol ekleyemiyorum canımm hata verdimm.");
+                return BadRequest("Rol eklenmedi.");
 
             return Ok("Role Updated");
         }

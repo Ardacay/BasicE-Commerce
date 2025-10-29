@@ -1,4 +1,4 @@
-﻿@model ECommerceManager.Dtos.Order.OrderDto
+﻿@*@model ECommerceManager.Dtos.Order.OrderDto
 
 
 @{
@@ -8,10 +8,10 @@
 <h2>Create Order</h2>
 
 <form asp-action="Create" method="post">
-    @* CustomerName giriş yapan kullanıcıdan hidden field ile *@
+     CustomerName giriş yapan kullanıcıdan hidden field ile 
     <input type="hidden" name="CustomerName" value="@User.Identity.Name" />
 
-    @* OrderDate otomatik olarak backend’de de atanabilir ama burada da yollayabiliriz *@
+     OrderDate otomatik olarak backend’de de atanabilir ama burada da yollayabiliriz 
     <input type="hidden" name="OrderDate" value="@DateTime.Now" />
 
     <div class="form-group">
@@ -23,7 +23,7 @@
 
     <div class="form-group">
         <label for="Stock">Stock</label>
-        <input asp-for="Items[0].Stock" class="form-control" />
+        <input asp-for="Items[0].Stoc" class="form-control" />
     </div>
 
     <div class="form-group">
@@ -32,4 +32,4 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Create</button>
-</form>
+</form>*@
